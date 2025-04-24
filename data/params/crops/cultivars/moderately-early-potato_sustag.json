@@ -1,0 +1,208 @@
+{
+	"metadata": {
+		"description": "Derived from default values, used within SUSTAg project",
+		"parameter version": 1,
+		"model version": 2.1
+	},
+    "AssimilatePartitioningCoeff": [
+		[
+			0.5,
+			0.5,
+			0,
+			0
+		],
+		[
+			0.3,
+			0.4,
+			0.3,
+			0
+		],
+		[
+			0.01,
+			0.25,
+			0.24,
+			0.5
+		],
+		[
+			0,
+			0.07,
+			0.11,
+			0.82
+		],
+		[
+			0,
+			0,
+			0.01,
+			0.99
+		],
+		[
+			0,
+			0,
+			0,
+			1
+		]
+	],
+	"BaseDaylength": [
+		[
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		],
+		"h"
+	],
+	"BeginSensitivePhaseHeatStress": [
+		0,
+		"°C d"
+	],
+	"CriticalTemperatureHeatStress": [
+		31,
+		"°C"
+	],
+	"CropHeightP1": 9,
+	"CropHeightP2": 0.3499999940395355,
+	"CropSpecificMaxRootingDepth": 1.100000023841858,
+	"CultivarName": "moderately early potato",
+	"DaylengthRequirement": [
+		[
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		],
+		"h"
+	],
+	"Description": "",
+	"DroughtStressThreshold": [
+		0.2,
+		0.2,
+		0.8,
+		0.7,
+		0.7,
+		0.7
+	],
+	"EndSensitivePhaseHeatStress": [
+		0,
+		"°C d"
+	],
+	"FrostDehardening": 5.050000190734863,
+	"FrostHardening": 0.014000000432133675,
+	"HeatSumIrrigationEnd": 900,
+	"HeatSumIrrigationStart": 113,
+	"LT50cultivar": -5,
+	"LatestHarvestDoy": -1,
+	"LowTemperatureExposure": 0.6539999842643738,
+	"MaxAssimilationRate": 30,
+	"MaxCropHeight": [
+		0.5,
+		"m"
+	],
+	"OptimumTemperature": [
+		[
+			30,
+			30,
+			30,
+			30,
+			30,
+			30
+		],
+		"°C"
+	],
+	"OrganIdsForCutting": [],
+	"OrganIdsForPrimaryYield": [
+		{
+			"organId": 4,
+			"type": "YieldComponent",
+			"yieldDryMatter": 0.22,
+			"yieldPercentage": 1
+		}
+	],
+	"OrganIdsForSecondaryYield": [],
+	"OrganSenescenceRate": [
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0.08,
+			0.03,
+			0,
+			0
+		],
+		[
+			0.08,
+			0.03,
+			0,
+			0
+		]
+	],
+	"Perennial": false,
+	"ResidueNRatio": 1.899999976158142,
+	"RespiratoryStress": 0.5400000214576721,
+	"SpecificLeafArea": [
+		[
+			0.003,
+			0.002,
+			0.0015,
+			0.0012,
+			0.0012,
+			0.0012
+		],
+		"ha kg-1"
+	],
+	"StageKcFactor": [
+		[
+			0.4,
+			0.6,
+			1,
+			1.1,
+			0.85,
+			0.4
+		],
+		"1;0"
+	],
+	"StageTemperatureSum": [
+		[
+			148,
+			300,
+			300,
+			280,
+			800,
+			25
+		],
+		"°C d"
+	],
+	"VernalisationRequirement": [
+		0,
+		0,
+		0,
+		0,
+		0,
+		0
+	],
+	"type": "CultivarParameters"
+}

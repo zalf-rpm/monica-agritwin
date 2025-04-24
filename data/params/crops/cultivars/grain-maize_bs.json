@@ -1,0 +1,227 @@
+{
+  "metadata": {
+    "description": "Reparameterization for Klimertrag project and vernalisation factor fix",
+    "date": "09-20201"
+  },
+  "AssimilatePartitioningCoeff": [
+    [
+      0.59999999999999998,
+      0.40000000000000002,
+      0,
+      0
+    ],
+    [
+      0.55000000000000004,
+      0.25,
+      0.20000000000000001,
+      0
+    ],
+    [
+      0.20000000000000001,
+      0.20000000000000001,
+      0.59999999999999998,
+      0
+    ],
+    [
+      0.01,
+      0.01,
+      0.5,
+      0.48
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ]
+  ],
+  "BaseDaylength": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "h"
+  ],
+  "BeginSensitivePhaseHeatStress": [
+    512,
+    "°C d"
+  ],
+  "CriticalTemperatureHeatStress": [
+    31,
+    "°C"
+  ],
+  "CropHeightP1": 9,
+  "CropHeightP2": 0.34999999403953552,
+  "CropSpecificMaxRootingDepth": 1.0,
+  "CultivarName": "grain maize",
+  "DaylengthRequirement": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "h"
+  ],
+  "Description": "",
+  "DroughtStressThreshold": [
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8,
+    0.8
+  ],
+  "EndSensitivePhaseHeatStress": [
+    792,
+    "°C d"
+  ],
+  "FrostDehardening": 0,
+  "FrostHardening": 0,
+  "HeatSumIrrigationEnd": 993,
+  "HeatSumIrrigationStart": 113,
+  "LT50cultivar": 0,
+  "LatestHarvestDoy": -1,
+  "LowTemperatureExposure": 0,
+  "MaxAssimilationRate": 99,
+  "MaxCropHeight": [
+    2,
+    "m"
+  ],
+  "OptimumTemperature": [
+    [
+      30,
+      30,
+      30,
+      30,
+      30,
+      30,
+      30
+    ],
+    "°C"
+  ],
+  "OrganIdsForCutting": [],
+  "OrganIdsForPrimaryYield": [
+    {
+      "organId": 4,
+      "type": "YieldComponent",
+      "yieldDryMatter": 0.85999999999999999,
+      "yieldPercentage": 0.78000000000000003
+    }
+  ],
+  "OrganIdsForSecondaryYield": [],
+  "OrganSenescenceRate": [
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0.0050000000000000001,
+      0.001,
+      0,
+      0
+    ],
+    [
+      0.10000000000000001,
+      0.0030000000000000001,
+      0,
+      0
+    ],
+    [
+      0.10000000000000001,
+      0.0050000000000000001,
+      0.012999999999999999,
+      0
+    ],
+    [
+      0,
+      0.02,
+      0.02,
+      0
+    ]
+  ],
+  "Perennial": false,
+  "ResidueNRatio": 0.5,
+  "RespiratoryStress": 0,
+  "SpecificLeafArea": [
+    [
+      0.005,
+      0.0022,
+      0.0017,
+      0.0019,
+      0.0018,
+      0.0018,
+      0.0018
+    ],
+    "ha kg-1"
+  ],
+  "StageKcFactor": [
+    [
+      0.9,
+      1.5,
+      1.5,
+      1.7,
+      1.75,
+      1.75,
+      1.5
+    ],
+    "1;0"
+  ],
+  "StageTemperatureSum": [
+    [
+      68,
+      284,
+      190,
+      250,
+      200,
+      400,
+      25
+    ],
+    "°C d"
+  ],
+  "VernalisationRequirement": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "type": "CultivarParameters"
+}

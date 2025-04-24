@@ -1,0 +1,220 @@
+{
+  "metadata": {
+    "description": "Klimertrag parameters. First parameterized on Braunschweig FACE experiment, then phenology adapted to DWD Jahreszaeler observations.",
+    "date": "01-2022"},
+    "WinterCrop": true,
+  "AssimilatePartitioningCoeff": [
+    [
+      0.5,
+      0.5,
+      0,
+      0
+    ],
+    [
+      0.3,
+      0.2,
+      0.5,
+      0
+    ],
+    [
+      0.10,
+      0.15,
+      0.2,
+      0.55
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "BaseDaylength": [
+    [
+      0,
+      0,
+      7,
+      7,
+      0,
+      0
+    ],
+    "h"
+  ],
+  "BeginSensitivePhaseHeatStress": [
+    472,
+    "°C d"
+  ],
+  "CriticalTemperatureHeatStress": [
+    31,
+    "°C"
+  ],
+  "CropHeightP1": 12,
+  "CropHeightP2": 0.60000002384185791,
+  "CropSpecificMaxRootingDepth": 1.2999999523162842,
+  "CultivarName": "winter barley",
+  "DaylengthRequirement": [
+    [
+      0,
+      20,
+      20,
+      20,
+      0,
+      0
+    ],
+    "h"
+  ],
+  "Description": "",
+  "DroughtStressThreshold": [
+    0.80000000000000004,
+    0.80000000000000004,
+    0.80000000000000004,
+    0.75,
+    0.59999999999999998,
+    0.5
+  ],
+  "EndSensitivePhaseHeatStress": [
+    572,
+    "°C d"
+  ],
+  "FrostDehardening": 5.05,
+  "FrostHardening": 0.018,
+  "HeatSumIrrigationEnd": 1032,
+  "HeatSumIrrigationStart": 560,
+  "LT50cultivar": -15,
+  "LatestHarvestDoy": -1,
+  "LowTemperatureExposure": 0.654,
+  "MaxAssimilationRate": 38,
+  "MaxCropHeight": [
+    0.87000000476837158,
+    "m"
+  ],
+  "OptimumTemperature": [
+    [
+      30,
+      30,
+      30,
+      30,
+      30,
+      30
+    ],
+    "°C"
+  ],
+  "OrganIdsForCutting": [],
+  "OrganIdsForPrimaryYield": [
+    {
+      "organId": 4,
+      "type": "YieldComponent",
+      "yieldDryMatter": 0.85999999999999999,
+      "yieldPercentage": 0.84999999999999998
+    }
+  ],
+  "OrganIdsForSecondaryYield": [
+    {
+      "organId": 2,
+      "type": "YieldComponent",
+      "yieldDryMatter": 0.85999999999999999,
+      "yieldPercentage": 0.84999999999999998
+    },
+    {
+      "organId": 3,
+      "type": "YieldComponent",
+      "yieldDryMatter": 0.85999999999999999,
+      "yieldPercentage": 0.90000000000000002
+    }
+  ],
+  "OrganSenescenceRate": [
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0.050000000000000003,
+      0,
+      0
+    ],
+    [
+      0,
+      0.050000000000000003,
+      0,
+      0
+    ]
+  ],
+  "Perennial": false,
+  "ResidueNRatio": 0.30000001192092896,
+  "RespiratoryStress": 0.54,
+  "SpecificLeafArea": [
+    [
+      0.00165,
+      0.0015,
+      0.0015,
+      0.0015,
+      0.0015,
+      0.0015
+    ],
+    "ha kg-1"
+  ],
+  "StageKcFactor": [
+    [
+      0.40000000000000002,
+      0.69999999999999996,
+      1.1000000000000001,
+      1.1000000000000001,
+      0.80000000000000004,
+      0.25
+    ],
+    "1;0"
+  ],
+  "StageTemperatureSum": [
+    [
+      100,
+      256,
+      216,
+      100,
+      267,
+      25
+    ],
+    "°C d"
+  ],
+  "VernalisationRequirement": [
+    0,
+    33,
+    0,
+    0,
+    0,
+    0
+  ],
+  "type": "CultivarParameters"
+}

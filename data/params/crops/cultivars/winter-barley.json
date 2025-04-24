@@ -1,0 +1,228 @@
+{
+	"metadata": {
+		"description": "Derived from default values, used within SUSTAg project",
+		"parameter version": 1,
+		"model version": 2.1
+	},
+	"WinterCrop": true,
+	"AssimilatePartitioningCoeff": [
+		[
+			0.5,
+			0.5,
+			0,
+			0
+		],
+		[
+			0.25,
+			0.45,
+			0.3,
+			0
+		],
+		[
+			0.15,
+			0.25,
+			0.45,
+			0.15
+		],
+		[
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		]
+	],
+	"BaseDaylength": [
+		[
+			0,
+			0,
+			7,
+			7,
+			0,
+			0
+		],
+		"h"
+	],
+	"BeginSensitivePhaseHeatStress": [
+		420,
+		"°C d"
+	],
+	"CriticalTemperatureHeatStress": [
+		31,
+		"°C"
+	],
+	"CropHeightP1": 12,
+	"CropHeightP2": 0.6000000238418579,
+	"CropSpecificMaxRootingDepth": 1.2999999523162842,
+	"CultivarName": "winter barley",
+	"DaylengthRequirement": [
+		[
+			0,
+			20,
+			20,
+			20,
+			0,
+			0
+		],
+		"h"
+	],
+	"Description": "",
+	"DroughtStressThreshold": [
+		0.8,
+		0.8,
+		0.8,
+		0.75,
+		0.6,
+		0.5
+	],
+	"EndSensitivePhaseHeatStress": [
+		540,
+		"°C d"
+	],
+	"FrostDehardening": 5.05,
+	"FrostHardening": 0.018,
+	"HeatSumIrrigationEnd": 1032,
+	"HeatSumIrrigationStart": 560,
+	"LT50cultivar": -15,
+	"LatestHarvestDoy": -1,
+	"LowTemperatureExposure": 0.654,
+	"MaxAssimilationRate": 30,
+	"MaxCropHeight": [
+		0.8700000047683716,
+		"m"
+	],
+	"OptimumTemperature": [
+		[
+			30,
+			30,
+			30,
+			30,
+			30,
+			30
+		],
+		"°C"
+	],
+	"OrganIdsForCutting": [],
+	"OrganIdsForPrimaryYield": [
+		{
+			"organId": 4,
+			"type": "YieldComponent",
+			"yieldDryMatter": 0.86,
+			"yieldPercentage": 0.85
+		}
+	],
+	"OrganIdsForSecondaryYield": [
+		{
+			"organId": 2,
+			"type": "YieldComponent",
+			"yieldDryMatter": 0.86,
+			"yieldPercentage": 1.0
+		},
+		{
+			"organId": 3,
+			"type": "YieldComponent",
+			"yieldDryMatter": 0.86,
+			"yieldPercentage": 1.0
+		},
+		{
+			"organId": 4,
+			"type": "YieldComponent",
+			"yieldDryMatter": 0.86,
+			"yieldPercentage": 0.15
+		}
+	],
+	"OrganSenescenceRate": [
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0.05,
+			0,
+			0
+		],
+		[
+			0,
+			0.05,
+			0,
+			0
+		]
+	],
+	"Perennial": false,
+	"ResidueNRatio": 0.30000001192092896,
+	"RespiratoryStress": 0,
+	"SpecificLeafArea": [
+		[
+			0.002,
+			0.0019,
+			0.0018,
+			0.0017,
+			0.0016,
+			0.0016
+		],
+		"ha kg-1"
+	],
+	"StageKcFactor": [
+		[
+			0.4,
+			0.7,
+			1.1,
+			1.1,
+			0.8,
+			0.25
+		],
+		"1;0"
+	],
+	"StageTemperatureSum": [
+		[
+			108,
+			326,
+			345,
+			138,
+			300,
+			25
+		],
+		"°C d"
+	],
+	"VernalisationRequirement": [
+		0,
+		33,
+		0,
+		0,
+		0,
+		0
+	],
+	"type": "CultivarParameters"
+}

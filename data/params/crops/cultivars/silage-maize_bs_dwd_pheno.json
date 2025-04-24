@@ -1,0 +1,252 @@
+{
+	"metadata": {
+		"description": "KlimErtrag parameters. First calibrated for MACSUR climate change scaling exercise for North Rhine-Westphalia (DE). Then parameterized on Braunschweig FACE experiment, then phenology adapted to DWD Jahreszaeler observations.",
+		"date": "01-2022"
+	},
+	"AssimilatePartitioningCoeff": [
+		[
+			0.59999999999999998,
+			0.40000000000000002,
+			0,
+			0
+		],
+		[
+			0.55000000000000004,
+			0.25,
+			0.20000000000000001,
+			0
+		],
+		[
+			0.20000000000000001,
+			0.20000000000000001,
+			0.59999999999999998,
+			0
+		],
+		[
+			0.01,
+			0.01,
+			0.5,
+			0.48
+		],
+		[
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			0,
+			0,
+			0,
+			1
+		],
+		[
+			0,
+			0,
+			0,
+			1
+		]
+	],
+	"BaseDaylength": [
+		[
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		],
+		"h"
+	],
+	"BeginSensitivePhaseHeatStress": [
+		730,
+		"°C d"
+	],
+	"CriticalTemperatureHeatStress": [
+		31,
+		"°C"
+	],
+	"CropHeightP1": 9,
+	"CropHeightP2": 0.3499999940395355,
+	"CropSpecificMaxRootingDepth": 1.0,
+	"CultivarName": "silage maize",
+	"DaylengthRequirement": [
+		[
+			0,
+			0,
+			0,
+			0,
+			0,
+			0,
+			0
+		],
+		"h"
+	],
+	"Description": "",
+	"DroughtStressThreshold": [
+		0.8,
+		0.8,
+		0.8,
+		0.8,
+		0.8,
+		0.8,
+		0.8
+	],
+	"EndSensitivePhaseHeatStress": [
+		1060,
+		"°C d"
+	],
+	"FrostDehardening": 0,
+	"FrostHardening": 0,
+	"HeatSumIrrigationEnd": 993,
+	"HeatSumIrrigationStart": 113,
+	"LT50cultivar": 0,
+	"LatestHarvestDoy": -1,
+	"LowTemperatureExposure": 0,
+	"MaxAssimilationRate": 99,
+	"MaxCropHeight": [
+		2,
+		"m"
+	],
+	"OptimumTemperature": [
+		[
+			30,
+			30,
+			30,
+			30,
+			30,
+			30,
+			30
+		],
+		"°C"
+	],
+	"OrganIdsForCutting": [],
+	"OrganIdsForPrimaryYield": [
+		{
+			"organId": 2,
+			"type": "YieldComponent",
+			"yieldDryMatter": 0.32,
+			"yieldPercentage": 0.9
+		},
+		{
+			"organId": 3,
+			"type": "YieldComponent",
+			"yieldDryMatter": 0.32,
+			"yieldPercentage": 0.9
+		},
+		{
+			"organId": 4,
+			"type": "YieldComponent",
+			"yieldDryMatter": 0.32,
+			"yieldPercentage": 1
+		}
+	],
+	"OrganIdsForSecondaryYield": [
+		{
+			"organId": 2,
+			"type": "YieldComponent",
+			"yieldDryMatter": 0.32,
+			"yieldPercentage": 0.1
+		},
+		{
+			"organId": 3,
+			"type": "YieldComponent",
+			"yieldDryMatter": 0.32,
+			"yieldPercentage": 0.1
+		}
+	],
+	"OrganSenescenceRate": [
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0,
+			0,
+			0,
+			0
+		],
+		[
+			0.005,
+			0.001,
+			0,
+			0
+		],
+		[
+			0.1,
+			0.003,
+			0,
+			0
+		],
+		[
+			0.1,
+			0.01,
+			0.013,
+			0
+		],
+		[
+			0,
+			0.02,
+			0.02,
+			0
+		]
+	],
+	"Perennial": false,
+	"ResidueNRatio": 0.5,
+	"RespiratoryStress": 0,
+	"SpecificLeafArea": [
+		[
+			0.005,
+			0.0022,
+			0.0017,
+			0.0019,
+			0.0018,
+			0.0018,
+			0.0018
+		],
+		"ha kg-1"
+	],
+	"StageKcFactor": [
+		[
+			0.9,
+			1.5,
+			1.5,
+			1.7,
+			1.75,
+			1.75,
+			1.5
+		],
+		"1;0"
+	],
+	"StageTemperatureSum": [
+		[
+			100,
+			220,
+			390,
+			120,
+			330,
+			140,
+			25
+		],
+		"°C d"
+	],
+	"VernalisationRequirement": [
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+		0
+	],
+	"type": "CultivarParameters"
+}
