@@ -79,11 +79,12 @@ DATA_GRID_HEIGHT = "germany/dem_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_SLOPE = "germany/slope_1000_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 DATA_GRID_SOIL = "germany/buek200_1000_25832_etrs89-utm32n.asc"
-# DATA_GRID_CROPS = "germany/CM_2017-2019_WW_1000m_25832_q3.asc"  # winter wheat
-# DATA_GRID_CROPS = "germany/CM_2017-2019_SM_1000m_25832_q3.asc"  # silage maize
-DATA_GRID_CROPS = "germany/crop_sm_2018_1000_25832_etrs89-utm32n.asc"  # silage maize from 2018 crop map
-# DATA_GRID_CROPS = "germany/CM_2017-2019_WR_1000m_25832_q3.asc"  # winter rapeseed
-DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # irrigation map for maize 2018
+DATA_GRID_CROPS = "germany/crop_sm_2018_1000_25832_etrs89-utm32n.asc"  # silage maize 2018 crop map
+# DATA_GRID_CROPS = "germany/crop_ww_2018_1000_25832_etrs89-utm32n.asc"  # winter wheat 2018 crop map
+# DATA_GRID_CROPS = "germany/crop_po_2018_1000_25832_etrs89-utm32n.asc"  # potato 2018 crop map
+DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # maize 2018 irrigation map
+# DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
+# DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
 TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
@@ -111,7 +112,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "mode": "re-local-remote",  # "mbm-local-remote",
         "server-port": server["port"] if server["port"] else "6667",
         "server": server["server"] if server["server"] else "login01.cluster.zalf.de",
-        "start-row": "191",
+        "start-row": "0",
         "end-row": "-1",
         "path_to_dem_grid": "",
         "sim.json": "sim.json",
