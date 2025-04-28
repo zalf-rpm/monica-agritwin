@@ -648,9 +648,11 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         # add default values for irrigation amount and threshold
                         env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [10, "mm"]
                         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                            "trigger_if_nFC_below_%"] = 30
+                            "trigger_if_nFC_below_%"] = [30, "%"]
                         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                            "calc_nFC_until_depth_m"] = 0.3
+                            "set_to_%nFC"] = [100, "%"]
+                        env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
+                            "calc_nFC_until_depth_m"] = [0.3, "%"]
                         print("irrigation amount:",
                               env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"])
                     else:
@@ -658,9 +660,11 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         # reset irrigation amount and threshold
                         env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [0, "mm"]
                         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                            "trigger_if_nFC_below_%"] = 50
+                            "trigger_if_nFC_below_%"] = [50, "%"]
                         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                            "calc_nFC_until_depth_m"] = 0.3
+                            "set_to_%nFC"] = [100, "%"]
+                        env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
+                            "calc_nFC_until_depth_m"] = [0.5, "m"]
 
                 env_template["params"]["simulationParameters"]["NitrogenResponseOn"] = setup["NitrogenResponseOn"]
                 env_template["params"]["simulationParameters"]["WaterDeficitResponseOn"] = setup[
