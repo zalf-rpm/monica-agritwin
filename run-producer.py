@@ -652,7 +652,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
                             "set_to_%nFC"] = [100, "%"]
                         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                            "calc_nFC_until_depth_m"] = [0.3, "%"]
+                            "calc_nFC_until_depth_m"] = [0.3, "m"]
                         print("irrigation amount:",
                               env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"])
                     else:
