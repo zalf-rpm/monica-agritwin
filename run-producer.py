@@ -665,6 +665,14 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             "set_to_%nFC"] = [100, "%"]
                         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
                             "calc_nFC_until_depth_m"] = [0.5, "m"]
+                else:
+                    env_template["params"]["simulationParameters"]["UseAutomaticIrrigation"] = False
+                    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [0, "mm"]
+                    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["trigger_if_nFC_below_%"] = [
+                        50, "%"]
+                    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["set_to_%nFC"] = [100, "%"]
+                    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["calc_nFC_until_depth_m"] = [
+                        0.5, "m"]
 
                 env_template["params"]["simulationParameters"]["NitrogenResponseOn"] = setup["NitrogenResponseOn"]
                 env_template["params"]["simulationParameters"]["WaterDeficitResponseOn"] = setup[
