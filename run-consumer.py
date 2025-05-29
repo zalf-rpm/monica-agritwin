@@ -394,7 +394,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
             process_message.wnof_count += 1
 
-            path_to_out_dir = config["out"] + str(setup_id) + "/" + str(row) + "/"
+            path_to_out_dir = config["csv-out"] + str(setup_id) + "/" + str(row) + "/"
             print(path_to_out_dir)
             if not os.path.exists(path_to_out_dir):
                 try:
