@@ -43,7 +43,10 @@
 				["CM-count", "FIRST"],
 				["Year", "LAST"],
 				["Crop", "FIRST"],
-				["Yield", "LAST"]
+				["Yield", "LAST"],
+				["Sand", [1,3]],
+				["Clay", [1,3]],
+				["Silt", [1,3]]
 			],
 			"_daily", [
 				"Date",
