@@ -86,7 +86,7 @@ DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
 DATA_GRID_CROPS = "germany/crop_ww_2018_1000_25832_etrs89-utm32n.asc"  # winter wheat 2018 crop map
 # DATA_GRID_CROPS = "germany/crop_po_2018_1000_25832_etrs89-utm32n.asc"  # potato 2018 crop map
 #DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # maize 2018 irrigation map
-DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
+#DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
 # DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
@@ -268,6 +268,18 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
         ## extract crop_id from crop-id name that has possible an extenstion
         crop_id_short = crop_id.split('_')[0]
+        crop_data=setup["crop_data"]
+
+        DATA_GRID_CROPS = str("germany/raster/"+crop_data)
+        path_to_crop_grid = paths["path-to-data-dir"]+DATA_GRID_CROPS  
+        crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
+        crop_crs = CRS.from_epsg(crop_epsg_code)
+        if crop_crs not in soil_crs_to_x_transformers:
+            soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
+        crop_meta, _ = Mrunlib.read_header(path_to_crop_grid)
+        crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
+        crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
+        print("read: ", path_to_crop_grid)
 
         if region_name and len(region_name) > 0:
             # Create the soil mask for the specific region
