@@ -39,7 +39,7 @@
 
 		
 		"events": [
-			"crop", [
+			"_crop", [
 				["CM-count", "FIRST"],
 				["Year", "LAST"],
 				["Crop", "FIRST"],
@@ -48,7 +48,7 @@
 				["Clay", [1,3]],
 				["Silt", [1,3]]
 			],
-			"_daily", [
+			"daily", [
 				"Date",
 				"Crop",
 				"Stage",
