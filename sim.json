@@ -52,6 +52,8 @@
 				"Date",
 				"Crop",
 				"Stage",
+				"AbBiom",
+				"LAI",
 				"Yield",
 				"TraDef"
 			]
