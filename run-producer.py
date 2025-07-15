@@ -94,7 +94,7 @@ TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/da
 
 # Additional data for masking the regions
 # NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
-NUTS1_REGIONS = "data/germany/NUTS250_N1.shp"
+NUTS1_REGIONS = "data/germany/Nordrhein_Westfalen.shp"
 
 TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
 
