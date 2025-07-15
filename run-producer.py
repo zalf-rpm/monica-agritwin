@@ -85,7 +85,7 @@ DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 #DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SOIL = "germany/LS_buek200_100_25832_etrs89-utm32n_2.asc"
 DATA_GRID_SOIL = "germany/NW_buek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # maize 2018 irrigation map
+#DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # maize 2018 irrigation map
 #DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
 # DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
@@ -214,15 +214,15 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     #print("read: ", path_to_crop_grid)
 
     # irrigation data
-    path_to_irrigation_grid = paths["path-to-data-dir"] + DATA_GRID_IRRIGATION
-    irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[2])
-    irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
-    if irrigation_crs not in soil_crs_to_x_transformers:
-        soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
-    irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
-    irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
-    irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata)
-    print("read: ", path_to_irrigation_grid)
+    #path_to_irrigation_grid = paths["path-to-data-dir"] + DATA_GRID_IRRIGATION
+    #irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[2])
+    #irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
+    #if irrigation_crs not in soil_crs_to_x_transformers:
+    #    soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
+    #irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
+    #irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
+    #irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata)
+    #print("read: ", path_to_irrigation_grid)
 
     # initialize irrigation manager
     irrigation_manager = IrrigationManager("irrigated_crops.json")
