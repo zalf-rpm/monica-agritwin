@@ -579,10 +579,10 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 slr, slh = tcoords[slope_crs]
                 slope = slope_interpolate(slr, slh)
 
-                if irrigation_crs not in tcoords:
-                    tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
-                irr_r, irr_h = tcoords[irrigation_crs]
-                irrigation = int(irrigation_interpolate(irr_r, irr_h))
+                #if irrigation_crs not in tcoords:
+                #    tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
+                #irr_r, irr_h = tcoords[irrigation_crs]
+                #irrigation = int(irrigation_interpolate(irr_r, irr_h))
 
                 env_template["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = setup[
                     "LeafExtensionModifier"]
