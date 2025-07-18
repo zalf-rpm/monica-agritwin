@@ -1,1 +1,2 @@
 data/germany/LSslope_100_25832_etrs89-utm32n.asc filter=lfs diff=lfs merge=lfs -text
+data/germany/LSdem_100_25832_etrs89-utm32n.asc filter=lfs diff=lfs merge=lfs -text
