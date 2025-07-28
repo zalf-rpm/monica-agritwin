@@ -76,15 +76,15 @@ PATHS = {
 
 DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
 DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 #DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # maize 2018 irrigation map
 #DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
 # DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
@@ -94,7 +94,7 @@ TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/da
 
 # Additional data for masking the regions
 # NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
-NUTS1_REGIONS = "data/germany/Lower_saxony.shp"
+NUTS1_REGIONS = "data/germany/Nordrhein_Westfalen.shp"
 
 TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
 
