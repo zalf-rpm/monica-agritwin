@@ -402,18 +402,18 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 # print(crop_grid_id)
                 if crop_grid_id != 1 or soil_id == -8888:
                     # print("row/col:", srow, "/", scol, "is not a crop pixel.")
-                    env_template["customId"] = {
-                        "setup_id": setup_id,
-                        "srow": srow, "scol": scol,
-                        "crow": int(crow), "ccol": int(ccol),
-                        "soil_id": soil_id,
-                        "env_id": sent_env_count,
-                        "nodata": True
-                    }
-                    if not DEBUG_DONOT_SEND:
-                        socket.send_json(env_template)
-                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
-                        sent_env_count += 1
+                    # env_template["customId"] = {
+                    #     "setup_id": setup_id,
+                    #     "srow": srow, "scol": scol,
+                    #     "crow": int(crow), "ccol": int(ccol),
+                    #     "soil_id": soil_id,
+                    #     "env_id": sent_env_count,
+                    #     "nodata": True
+                    # }
+                    # if not DEBUG_DONOT_SEND:
+                    #     socket.send_json(env_template)
+                    #     # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
+                    #     sent_env_count += 1
                     continue
 
                 tcoords = {}
@@ -568,18 +568,18 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     # print("row/col:", srow, "/", scol, "has unknown soil_id:", soil_id)
                     # unknown_soil_ids.add(soil_id)
 
-                    env_template["customId"] = {
-                        "setup_id": setup_id,
-                        "srow": srow, "scol": scol,
-                        "crow": int(crow), "ccol": int(ccol),
-                        "soil_id": soil_id,
-                        "env_id": sent_env_count,
-                        "nodata": True,
-                    }
-                    if not DEBUG_DONOT_SEND:
-                        socket.send_json(env_template)
-                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
-                        sent_env_count += 1
+                    # env_template["customId"] = {
+                    #     "setup_id": setup_id,
+                    #     "srow": srow, "scol": scol,
+                    #     "crow": int(crow), "ccol": int(ccol),
+                    #     "soil_id": soil_id,
+                    #     "env_id": sent_env_count,
+                    #     "nodata": True,
+                    # }
+                    # if not DEBUG_DONOT_SEND:
+                    #     socket.send_json(env_template)
+                    #     # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
+                    #     sent_env_count += 1
                     continue
 
                 if dem_crs not in tcoords:
