@@ -265,7 +265,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                 if landuse_id not in [2, 3, 4]:
                     soil_grid_template[srow, scol] = -9999
 
-        print("filtered through CORINE")
+        # ("filtered through CORINE")
 
     # set all data values to one, to count them later
     soil_grid_template[soil_grid_template != nodata_value] = 1
@@ -377,11 +377,14 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                 # print "ignoring", result.get("type", "")
                 return
 
-            print("received work result ", process_message.received_env_count, " customId: ",
-                  str(msg.get("customId", "")))
+            # print("received work result ", process_message.received_env_count, " customId: ",
+            #       str(msg.get("customId", "")))
 
             custom_id = msg["customId"]
             is_nodata = custom_id["nodata"]
+            if not is_nodata:
+                print("received work result ", process_message.received_env_count, " customId: ",
+                      str(msg.get("customId", "")))
             if is_nodata:
                 return leave
             setup_id = custom_id["setup_id"]

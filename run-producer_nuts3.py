@@ -496,8 +496,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             sowing_ws["date"] = seed_harvest_data["sowing-date"]
                             harvest_ws["date"] = "{:04d}-{:02d}-{:02d}".format(hds[0], calc_harvest_date.month,
                                                                                calc_harvest_date.day)
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
 
                         elif setup["sowing-date"] == "fixed" and setup["harvest-date"] == "auto":
                             if is_winter_crop:
@@ -507,8 +507,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             sowing_ws["date"] = seed_harvest_data["sowing-date"]
                             harvest_ws["latest-date"] = "{:04d}-{:02d}-{:02d}".format(hds[0], calc_harvest_date.month,
                                                                                       calc_harvest_date.day)
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
 
                         elif setup["sowing-date"] == "fixed" and setup["harvest-date"] == "auto1":
                             if is_winter_crop:
@@ -517,8 +517,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                                 calc_harvest_date = date(2000, 12, 31) + timedelta(days=hdoy)
                             sowing_ws["date"] = seed_harvest_data["sowing-date"]
                             harvest_ws["latest-date"] = "{:04d}-{:02d}-{:02d}".format(hds[0], hds[1], hds[2])
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
 
                         elif setup["sowing-date"] == "auto" and setup["harvest-date"] == "fixed":
                             sowing_ws["earliest-date"] = seed_harvest_data["earliest-sowing-date"] if esd > date(
@@ -527,9 +527,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             sowing_ws["latest-date"] = "{:04d}-{:02d}-{:02d}".format(sds[0], calc_sowing_date.month,
                                                                                      calc_sowing_date.day)
                             harvest_ws["date"] = seed_harvest_data["harvest-date"]
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["earliest-date"], "<",
-                                  sowing_ws["latest-date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["earliest-date"], "<",
+                            #       sowing_ws["latest-date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
 
                         elif setup["sowing-date"] == "auto" and setup["harvest-date"] == "auto":
                             sowing_ws["earliest-date"] = seed_harvest_data["earliest-sowing-date"] if esd > date(
@@ -541,9 +541,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             sowing_ws["latest-date"] = seed_harvest_data["latest-sowing-date"]
                             harvest_ws["latest-date"] = "{:04d}-{:02d}-{:02d}".format(hds[0], calc_harvest_date.month,
                                                                                       calc_harvest_date.day)
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["earliest-date"], "<",
-                                  sowing_ws["latest-date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["earliest-date"], "<",
+                            #       sowing_ws["latest-date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
 
                         elif setup["sowing-date"] == "fixed1" and setup["harvest-date"] == "fixed":
                             # calc_harvest_date = date(2000, 12, 31) + timedelta(days=min(hdoy, sdoy-1))
@@ -555,8 +555,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             # print(seed_harvest_data["sowing-date"])
                             harvest_ws["date"] = "{:04d}-{:02d}-{:02d}".format(hds[0], calc_harvest_date.month,
                                                                                calc_harvest_date.day)
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
 
                     # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["earliest-date"], "<", sowing_ws["latest-date"] )
                     # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"], "<", sowing_ws["earliest-date"], "<", sowing_ws["latest-date"] )
@@ -762,14 +762,14 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     "nuts3": region_name
                 }
 
-                print("Harvest type:", setup["harvest-date"])
-                print("Srow: ", env_template["customId"]["srow"], "Scol:", env_template["customId"]["scol"])
+                # print("Harvest type:", setup["harvest-date"])
+                # print("Srow: ", env_template["customId"]["srow"], "Scol:", env_template["customId"]["scol"])
                 harvest_ws = next(
                     filter(lambda ws: ws["type"][-7:] == "Harvest", env_template["cropRotation"][0]["worksteps"]))
-                if setup["harvest-date"] == "fixed":
-                    print("Harvest-date:", harvest_ws["date"])
-                elif setup["harvest-date"] == "auto":
-                    print("Harvest-date:", harvest_ws["latest-date"])
+                # if setup["harvest-date"] == "fixed":
+                #     print("Harvest-date:", harvest_ws["date"])
+                # elif setup["harvest-date"] == "auto":
+                #     print("Harvest-date:", harvest_ws["latest-date"])
 
                 if not DEBUG_DONOT_SEND:
                     socket.send_json(env_template)
