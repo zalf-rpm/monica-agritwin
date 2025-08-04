@@ -28,6 +28,8 @@ import zmq
 import geopandas as gpd
 import rasterio
 from rasterio import features
+from rasterio.features import rasterize
+from rasterio.transform import from_origin
 import pandas as pd
 
 import monica_io3
@@ -99,6 +101,8 @@ NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
 TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
 
 gdf = gpd.read_file(NUTS3_REGIONS)
+gdf["NUTS_ID_INT"] = gdf["NUTS_NAME"].astype("category").cat.codes
+nuts3_lookup = dict(zip(gdf["NUTS_ID_INT"], gdf["NUTS_NAME"]))
 
 DEBUG_DONOT_SEND = False
 DEBUG_WRITE = False
@@ -123,7 +127,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "crop.json": "crop.json",
         "site.json": "site.json",
         "setups-file": "sim_setups_nuts3.csv",
-        "run-setups": "[1]",
+        "run-setups": "[3]",
         "shared_id": shared_id
     }
 
@@ -366,6 +370,11 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         # cs__ = open("coord_mapping_etrs89-utm32n_to_wgs84-latlon.csv", "w")
         # cs__.write("row,col,center_25832_etrs89-utm32n_r,center_25832_etrs89-utm32n_h,center_lat,center_lon\n")
 
+        # Rasterize NUTS3 regions shapefile
+        transform = from_origin(xllcorner, yllcorner + srows * scellsize, scellsize, scellsize)
+        nuts3_raster = rasterize(((geom, value) for geom, value in zip(gdf.geometry, gdf["NUTS_ID_INT"])),
+                                 out_shape=(srows, scols), transform=transform, fill=nodata_value, dtype='int32')
+
         for srow in range(0, srows):
             print(srow, end=", ")
 
@@ -385,18 +394,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 # inter = crow/ccol encoded into integer
                 crow, ccol = climate_data_interpolator(sr, sh)
 
-                # Determine which NUTS3 region the point belongs to
-                coord_df = pd.DataFrame({'x': [sr], 'y': [sh]})
-
-                point_gdf = gpd.GeoDataFrame(
-                    coord_df,
-                    geometry=gpd.points_from_xy(coord_df['x'], coord_df['y']),
-                    crs=gdf.crs
-                )
-
-                joined = gpd.sjoin(point_gdf, gdf[["NUTS_NAME", "geometry"]], how="left", predicate="within")
-
-                region_name = joined.iloc[0]["NUTS_NAME"] if not joined.empty else None
+                # Get the NUTS3 region code for the current grid cell
+                nuts3_id = int(nuts3_raster[srow, scol])
+                region_name = nuts3_lookup[nuts3_id] if nuts3_id != nodata_value else None
 
                 crop_grid_id = int(crop_grid[srow, scol])
                 # print(crop_grid_id)
