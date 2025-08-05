@@ -30,12 +30,11 @@ import rasterio
 from rasterio import features
 from rasterio.features import rasterize
 from rasterio.transform import from_origin
-import pandas as pd
+import subprocess
 
 import monica_io3
 import soil_io3
 import monica_run_lib as Mrunlib
-# from irrigation_manager import IrrigationManager
 
 PATHS = {
     # adjust the local path to your environment
@@ -48,25 +47,6 @@ PATHS = {
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
         "path-debug-write-folder": "./debug-out/",
     },
-    "mbm-local-remote": {
-        # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
-        "path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
-        # mounted path to archive or hard drive with climate data
-        "monica-path-to-climate-dir": "/monica_data/climate-data/",
-        # mounted path to archive accessable by monica executable
-        "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
-        "path-debug-write-folder": "./debug-out/",
-    },
-    "mbm-local-local": {
-        # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
-        "path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
-        # mounted path to archive or hard drive with climate data
-        "monica-path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
-        # mounted path to archive accessable by monica executable
-        "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
-        "path-debug-write-folder": "./debug-out/",
-    },
-
     "remoteProducer-remoteMonica": {
         # "include-file-base-path": "/monica-parameters/", # path to monica-parameters
         "path-to-climate-dir": "/data/",  # mounted path to archive or hard drive with climate data
@@ -77,20 +57,29 @@ PATHS = {
     }
 }
 
+# Germany
 DATA_SOIL_DB = "germany/buek200.sqlite"
-#DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
-DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 #DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 #DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # maize 2018 irrigation map
 #DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
-# DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
+#DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
+
+# Lower Saxony
+DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+LS_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
+LS_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSslope_100_25832_etrs89-utm32n.asc"
+
+# North Rhine-Westphalia
+# DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
+
+
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
 TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
@@ -186,6 +175,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # height data for germany
     path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
+    if "LS" in DATA_GRID_HEIGHT:
+        subprocess.run(["wget", "-O", path_to_dem_grid, LS_HEIGHT_URL], check=True)
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -197,6 +188,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # slope data
     path_to_slope_grid = paths["path-to-data-dir"] + DATA_GRID_SLOPE
+    if "LS" in DATA_GRID_SLOPE:
+        subprocess.run(["wget", "-O", path_to_slope_grid, LS_SLOPE_URL], check=True)
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
@@ -205,48 +198,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     slope_grid = np.loadtxt(path_to_slope_grid, dtype=float, skiprows=6)
     slope_interpolate = Mrunlib.create_ascii_grid_interpolator(slope_grid, slope_metadata)
     print("read: ", path_to_slope_grid)
-
-    # crop mask data
-    #path_to_crop_grid = paths["path-to-data-dir"] + DATA_GRID_CROPS
-    #crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[4])
-    #crop_crs = CRS.from_epsg(crop_epsg_code)
-    #if crop_crs not in soil_crs_to_x_transformers:
-    #    soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
-    #crop_meta, _ = Mrunlib.read_header(path_to_crop_grid)
-    #crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
-    #crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
-    #print("read: ", path_to_crop_grid)
-
-    # irrigation data
-    #path_to_irrigation_grid = paths["path-to-data-dir"] + DATA_GRID_IRRIGATION
-    #irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[2])
-    #irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
-    #if irrigation_crs not in soil_crs_to_x_transformers:
-    #    soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
-    #irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
-    #irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
-    #irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata)
-    #print("read: ", path_to_irrigation_grid)
-
-    # initialize irrigation manager
-    # irrigation_manager = IrrigationManager("irrigated_crops.json")
-
-    # Create the function for the mask. This function will later use the additional column in a setup file!
-
-    # def create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid):
-    #     regions_df = gpd.read_file(NUTS1_REGIONS)
-    #     region = regions_df[regions_df["NUTS_NAME"] == region_name]
-    #
-    #     # This is needed to read the transformation data correctly from the file. With the original opening it does not work
-    #     with rasterio.open(path_to_soil_grid) as dataset:
-    #         soil_grid = dataset.read(1)
-    #         transform = dataset.transform
-    #
-    #     rows, cols = soil_grid.shape
-    #     mask = rasterio.features.geometry_mask([region.geometry.values[0]], out_shape=(rows, cols), transform=transform,
-    #                                            invert=True)
-    #
-    #     return mask
 
     sent_env_count = 0
     start_time = time.perf_counter()
@@ -285,16 +236,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
         print("read: ", path_to_crop_grid)
 
-        # if region_name and len(region_name) > 0:
-        #     # Create the soil mask for the specific region
-        #     path_to_soil_grid = paths["path-to-data-dir"] + DATA_GRID_SOIL
-        #     mask = create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid)
-        #
-        #     # Apply the soil mask to the soil grid
-        #     soil_grid_copy = soil_grid.copy()
-        #     soil_grid[mask == False] = -8888
-        #     soil_grid[soil_grid_copy == -9999] = -9999
-
         # add crop id from setup file
         try:
             # read seed/harvest dates for each crop_id
@@ -310,8 +251,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             continue
 
         cdict = {}
-        # path to latlon-to-rowcol.json
-        # path = TEMPLATE_PATH_LATLON.format(path_to_climate_dir=paths["path-to-climate-dir"] + setup["climate_path_to_latlon_file"] + "/")
         path = TEMPLATE_PATH_LATLON.format(
             path_to_climate_dir=paths["path-to-climate-dir"] + setup["climate_path_to_latlon_file"] + "/")
         climate_data_interpolator = Mrunlib.create_climate_geoGrid_interpolator_from_json_file(path, wgs84_crs,
@@ -592,11 +531,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 slr, slh = tcoords[slope_crs]
                 slope = slope_interpolate(slr, slh)
 
-                #if irrigation_crs not in tcoords:
-                #    tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
-                #irr_r, irr_h = tcoords[irrigation_crs]
-                #irrigation = int(irrigation_interpolate(irr_r, irr_h))
-
                 env_template["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = setup[
                     "LeafExtensionModifier"]
 
@@ -669,39 +603,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
                 env_template["params"]["simulationParameters"]["UseNMinMineralFertilisingMethod"] = setup[
                     "fertilization"]
-
-                # if setup["irrigation"] and irrigation == 1:
-                #     # check if the crop type is in the irrigated crops map
-                #     if irrigation_manager.should_be_irrigated_by_crop_id(setup["crop-id"]):
-                #         env_template["params"]["simulationParameters"]["UseAutomaticIrrigation"] = True
-                #         # add default values for irrigation amount and threshold
-                #         env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [10, "mm"]
-                #         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                #             "trigger_if_nFC_below_%"] = [30, "%"]
-                #         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                #             "set_to_%nFC"] = [100, "%"]
-                #         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                #             "calc_nFC_until_depth_m"] = [0.3, "m"]
-                #         print("irrigation amount:",
-                #               env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"])
-                #     else:
-                #         env_template["params"]["simulationParameters"]["UseAutomaticIrrigation"] = False
-                #         # reset irrigation amount and threshold
-                #         env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [0, "mm"]
-                #         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                #             "trigger_if_nFC_below_%"] = [50, "%"]
-                #         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                #             "set_to_%nFC"] = [100, "%"]
-                #         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
-                #             "calc_nFC_until_depth_m"] = [0.5, "m"]
-                # else:
-                #     env_template["params"]["simulationParameters"]["UseAutomaticIrrigation"] = False
-                #     env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [0, "mm"]
-                #     env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["trigger_if_nFC_below_%"] = [
-                #         50, "%"]
-                #     env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["set_to_%nFC"] = [100, "%"]
-                #     env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["calc_nFC_until_depth_m"] = [
-                #         0.5, "m"]
 
                 env_template["params"]["simulationParameters"]["NitrogenResponseOn"] = setup["NitrogenResponseOn"]
                 env_template["params"]["simulationParameters"]["WaterDeficitResponseOn"] = setup[
