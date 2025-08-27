@@ -58,8 +58,8 @@
 				"Year",
 				"Month",
 				["Precip", "SUM"],
-				["tavg", "AVG"],
-				["globrad", "AVG"]
+				["Tavg", "AVG"],
+				["Globrad", "AVG"]
 			],
 			"_daily", [
 				"Date",
