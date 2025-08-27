@@ -48,11 +48,18 @@
 				["Clay", [1,15]],
 				["Silt", [1,15]]
 			],
-			"crop", [
+			"_crop", [
 				["CM-count", "FIRST"],
 				["Sand", [1,20]],
 				["Clay", [1,20]],
 				["Silt", [1,20]]
+			],
+			"monthly", [
+				"Year",
+				"Month",
+				["Precip", "SUM"],
+				["tavg", "AVG"],
+				["globrad", "AVG"]
 			],
 			"_daily", [
 				"Date",
