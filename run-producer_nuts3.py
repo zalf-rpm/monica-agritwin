@@ -57,7 +57,7 @@ PATHS = {
     }
 }
 
-# Germany
+# Brandenburg
 DATA_SOIL_DB = "germany/buek200.sqlite"
 DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
 DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
