@@ -388,7 +388,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                             #     avg_tradef = round(sum(tradefs) / len(tradefs), 3) if tradefs else -9999
                             #     _.write(f"{date},{avg_tradef},{sdata['param_value']},{region}\n")
 
-                            for stage, counts in sorted(rdata["stage_to_days_below"].items()):
+                            for stage, counts in sorted(rdata["stage_to_days_below_dst"].items()):
                                 avg_days = round(sum(counts) / len(counts), 2) if counts else -9999
                                 _.write(f"{stage},{avg_days},{sdata['param_value']},{region}\n")
 
