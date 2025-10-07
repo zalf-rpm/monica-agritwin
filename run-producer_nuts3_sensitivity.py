@@ -93,7 +93,9 @@ DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 # Bavaria
 #DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_HEIGHT = "germany/BAVdem_100_25832_etrs89-utm32n.asc"
+#BAV_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/BAVdem_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/BAVslope_100_25832_etrs89-utm32n.asc"
+#BAV_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/BAVslope_100_25832_etrs89-utm32n.asc"
 
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
@@ -193,6 +195,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
     if "LS" in DATA_GRID_HEIGHT:
         subprocess.run(["wget", "-O", path_to_dem_grid, LS_HEIGHT_URL], check=True)
+    if "BAV" in DATA_GRID_HEIGHT:
+        subprocess.run(["wget", "-O", path_to_dem_grid, BAV_HEIGHT_URL], check=True)
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -206,6 +210,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     path_to_slope_grid = paths["path-to-data-dir"] + DATA_GRID_SLOPE
     if "LS" in DATA_GRID_SLOPE:
         subprocess.run(["wget", "-O", path_to_slope_grid, LS_SLOPE_URL], check=True)
+    if "BAV" in DATA_GRID_SLOPE:
+        subprocess.run(["wget", "-O", path_to_slope_grid, BAV_SLOPE_URL], check=True)
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
@@ -722,7 +728,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
                     env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
                         "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
-                print("pathToClimateCSV:", env_template["pathToClimateCSV"])
+                # print("pathToClimateCSV:", env_template["pathToClimateCSV"])
                 if DEBUG_WRITE_CLIMATE:
                     listOfClimateFiles.add(subpath_to_csv)
 
@@ -750,7 +756,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
                 if not DEBUG_DONOT_SEND:
                     socket.send_json(env_template)
-                    print("sent env ", sent_env_count, " customId: ", env_template["customId"])
+                    # print("sent env ", sent_env_count, " customId: ", env_template["customId"])
 
                     # Save the sent env_template as a json file for debugging
                     # with open(f"out/env_template_{setup_id}_{sent_env_count}.json", "w") as f:
