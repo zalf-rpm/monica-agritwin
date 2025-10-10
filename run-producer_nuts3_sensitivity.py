@@ -69,11 +69,11 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
 
 # Lower Saxony
-DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
-LS_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
-LS_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+#LS_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
+#LS_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSslope_100_25832_etrs89-utm32n.asc"
 
 # North Rhine-Westphalia
 #DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
@@ -81,9 +81,9 @@ LS_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/
 #DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony
-#DATA_GRID_SOIL = "germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/SAXdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/SAXslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/SAXdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/SAXslope_100_25832_etrs89-utm32n.asc"
 
 # Hessen
 #DATA_GRID_SOIL = "germany/HEbuek200_100_25832_etrs89-utm32n.asc"
