@@ -103,8 +103,8 @@ DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32
 # DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
 # DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
 
-# TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
-TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
+TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
+# TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
 TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
 
 # Additional data for masking the regions
