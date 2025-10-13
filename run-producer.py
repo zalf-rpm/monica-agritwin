@@ -75,30 +75,44 @@ PATHS = {
 }
 
 DATA_SOIL_DB = "germany/buek200.sqlite"
-#DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
-DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
-#DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # maize 2018 irrigation map
-#DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
-# DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
-TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
-# TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
+
+# Germany 1000 m
+DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/raster_backup/dem_1000_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/raster_backup/slope_1000_25832_etrs89-utm32n.asc"
+# DATA_GRID_CROPS = "germany/raster_backup/crop_sm_2018_1000_25832_etrs89-utm32n.asc"  # silage maize 2018 crop map
+DATA_GRID_CROPS = "germany/raster_backup/crop_ww_2018_1000_25832_etrs89-utm32n.asc"  # winter wheat 2018 crop map
+# DATA_GRID_CROPS = "germany/raster_backup/crop_po_2018_1000_25832_etrs89-utm32n.asc"  # potato 2018 crop map
+# DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # maize 2018 irrigation map
+DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
+# DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
+# DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
+
+# Germany 100 m
+# DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
+
+# Lower Saxony 100 m
+# DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
+
+# North Rhine-Westphalia 100 m
+# DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
+
+# TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
+TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
 TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
 
 # Additional data for masking the regions
-# NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
-NUTS1_REGIONS = "data/germany/Nordrhein_Westfalen.shp"
+NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
 
 TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
 
-gdf = gpd.read_file(NUTS1_REGIONS)
+gdf = gpd.read_file(NUTS3_REGIONS)
 
 DEBUG_DONOT_SEND = False
 DEBUG_WRITE = False
@@ -122,7 +136,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "sim.json": "sim.json",
         "crop.json": "crop.json",
         "site.json": "site.json",
-        "setups-file": "sim_setups.csv",
+        "setups-file": "sim_setups_germany.csv",
         "run-setups": "[1]",
         "shared_id": shared_id
     }
@@ -203,32 +217,31 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     print("read: ", path_to_slope_grid)
 
     # crop mask data
-    #path_to_crop_grid = paths["path-to-data-dir"] + DATA_GRID_CROPS
-    #crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[4])
-    #crop_crs = CRS.from_epsg(crop_epsg_code)
-    #if crop_crs not in soil_crs_to_x_transformers:
-    #    soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
-    #crop_meta, _ = Mrunlib.read_header(path_to_crop_grid)
-    #crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
-    #crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
-    #print("read: ", path_to_crop_grid)
+    path_to_crop_grid = paths["path-to-data-dir"] + DATA_GRID_CROPS
+    crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[4])
+    crop_crs = CRS.from_epsg(crop_epsg_code)
+    if crop_crs not in soil_crs_to_x_transformers:
+       soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
+    crop_meta, _ = Mrunlib.read_header(path_to_crop_grid)
+    crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
+    crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
+    print("read: ", path_to_crop_grid)
 
     # irrigation data
-    #path_to_irrigation_grid = paths["path-to-data-dir"] + DATA_GRID_IRRIGATION
-    #irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[2])
-    #irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
-    #if irrigation_crs not in soil_crs_to_x_transformers:
-    #    soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
-    #irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
-    #irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
-    #irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata)
-    #print("read: ", path_to_irrigation_grid)
+    path_to_irrigation_grid = paths["path-to-data-dir"] + DATA_GRID_IRRIGATION
+    irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[2])
+    irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
+    if irrigation_crs not in soil_crs_to_x_transformers:
+       soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
+    irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
+    irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
+    irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata)
+    print("read: ", path_to_irrigation_grid)
 
     # initialize irrigation manager
     irrigation_manager = IrrigationManager("irrigated_crops.json")
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
-
     def create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid):
         regions_df = gpd.read_file(NUTS1_REGIONS)
         region = regions_df[regions_df["NUTS_NAME"] == region_name]
@@ -268,23 +281,23 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
         ## extract crop_id from crop-id name that has possible an extenstion
         crop_id_short = crop_id.split('_')[0]
-        crop_data=setup["crop_data"]
+        # crop_data=setup["crop_data"]
 
-        DATA_GRID_CROPS = str("germany/raster/"+crop_data)
-        path_to_crop_grid = paths["path-to-data-dir"]+DATA_GRID_CROPS  
-        crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
-        crop_crs = CRS.from_epsg(crop_epsg_code)
-        if crop_crs not in soil_crs_to_x_transformers:
-            soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
-        crop_meta, _ = Mrunlib.read_header(path_to_crop_grid)
-        crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
-        crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
-        print("read: ", path_to_crop_grid)
+        # DATA_GRID_CROPS = str("germany/raster/"+crop_data)
+        # path_to_crop_grid = paths["path-to-data-dir"]+DATA_GRID_CROPS
+        # crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
+        # crop_crs = CRS.from_epsg(crop_epsg_code)
+        # if crop_crs not in soil_crs_to_x_transformers:
+        #     soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
+        # crop_meta, _ = Mrunlib.read_header(path_to_crop_grid)
+        # crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
+        # crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
+        # print("read: ", path_to_crop_grid)
 
         if region_name and len(region_name) > 0:
             # Create the soil mask for the specific region
             path_to_soil_grid = paths["path-to-data-dir"] + DATA_GRID_SOIL
-            mask = create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid)
+            mask = create_mask_from_shapefile(NUTS3_REGIONS, region_name, path_to_soil_grid)
 
             # Apply the soil mask to the soil grid
             soil_grid_copy = soil_grid.copy()
@@ -483,8 +496,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             sowing_ws["date"] = seed_harvest_data["sowing-date"]
                             harvest_ws["date"] = "{:04d}-{:02d}-{:02d}".format(hds[0], calc_harvest_date.month,
                                                                                calc_harvest_date.day)
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
 
                         elif setup["sowing-date"] == "fixed" and setup["harvest-date"] == "auto":
                             if is_winter_crop:
@@ -494,8 +507,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             sowing_ws["date"] = seed_harvest_data["sowing-date"]
                             harvest_ws["latest-date"] = "{:04d}-{:02d}-{:02d}".format(hds[0], calc_harvest_date.month,
                                                                                       calc_harvest_date.day)
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
 
                         elif setup["sowing-date"] == "fixed" and setup["harvest-date"] == "auto1":
                             if is_winter_crop:
@@ -504,8 +517,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                                 calc_harvest_date = date(2000, 12, 31) + timedelta(days=hdoy)
                             sowing_ws["date"] = seed_harvest_data["sowing-date"]
                             harvest_ws["latest-date"] = "{:04d}-{:02d}-{:02d}".format(hds[0], hds[1], hds[2])
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
 
                         elif setup["sowing-date"] == "auto" and setup["harvest-date"] == "fixed":
                             sowing_ws["earliest-date"] = seed_harvest_data["earliest-sowing-date"] if esd > date(
@@ -514,9 +527,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             sowing_ws["latest-date"] = "{:04d}-{:02d}-{:02d}".format(sds[0], calc_sowing_date.month,
                                                                                      calc_sowing_date.day)
                             harvest_ws["date"] = seed_harvest_data["harvest-date"]
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["earliest-date"], "<",
-                                  sowing_ws["latest-date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["earliest-date"], "<",
+                            #       sowing_ws["latest-date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
 
                         elif setup["sowing-date"] == "auto" and setup["harvest-date"] == "auto":
                             sowing_ws["earliest-date"] = seed_harvest_data["earliest-sowing-date"] if esd > date(
@@ -528,9 +541,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             sowing_ws["latest-date"] = seed_harvest_data["latest-sowing-date"]
                             harvest_ws["latest-date"] = "{:04d}-{:02d}-{:02d}".format(hds[0], calc_harvest_date.month,
                                                                                       calc_harvest_date.day)
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["earliest-date"], "<",
-                                  sowing_ws["latest-date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["earliest-date"], "<",
+                            #       sowing_ws["latest-date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"])
 
                         elif setup["sowing-date"] == "fixed1" and setup["harvest-date"] == "fixed":
                             # calc_harvest_date = date(2000, 12, 31) + timedelta(days=min(hdoy, sdoy-1))
@@ -542,8 +555,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             # print(seed_harvest_data["sowing-date"])
                             harvest_ws["date"] = "{:04d}-{:02d}-{:02d}".format(hds[0], calc_harvest_date.month,
                                                                                calc_harvest_date.day)
-                            print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
-                            print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["date"])
+                            # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["date"])
 
                     # print("dates: ", int(seed_harvest_cs), ":", sowing_ws["earliest-date"], "<", sowing_ws["latest-date"] )
                     # print("dates: ", int(seed_harvest_cs), ":", harvest_ws["latest-date"], "<", sowing_ws["earliest-date"], "<", sowing_ws["latest-date"] )
@@ -579,10 +592,10 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 slr, slh = tcoords[slope_crs]
                 slope = slope_interpolate(slr, slh)
 
-                #if irrigation_crs not in tcoords:
-                #    tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
-                #irr_r, irr_h = tcoords[irrigation_crs]
-                #irrigation = int(irrigation_interpolate(irr_r, irr_h))
+                if irrigation_crs not in tcoords:
+                   tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
+                irr_r, irr_h = tcoords[irrigation_crs]
+                irrigation = int(irrigation_interpolate(irr_r, irr_h))
 
                 env_template["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = setup[
                     "LeafExtensionModifier"]
@@ -669,8 +682,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             "set_to_%nFC"] = [100, "%"]
                         env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
                             "calc_nFC_until_depth_m"] = [0.3, "m"]
-                        print("irrigation amount:",
-                              env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"])
+                        # print("irrigation amount:",
+                        #       env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"])
                     else:
                         env_template["params"]["simulationParameters"]["UseAutomaticIrrigation"] = False
                         # reset irrigation amount and threshold
@@ -748,14 +761,14 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     "nodata": False
                 }
 
-                print("Harvest type:", setup["harvest-date"])
+                # print("Harvest type:", setup["harvest-date"])
                 print("Srow: ", env_template["customId"]["srow"], "Scol:", env_template["customId"]["scol"])
                 harvest_ws = next(
                     filter(lambda ws: ws["type"][-7:] == "Harvest", env_template["cropRotation"][0]["worksteps"]))
-                if setup["harvest-date"] == "fixed":
-                    print("Harvest-date:", harvest_ws["date"])
-                elif setup["harvest-date"] == "auto":
-                    print("Harvest-date:", harvest_ws["latest-date"])
+                # if setup["harvest-date"] == "fixed":
+                #     print("Harvest-date:", harvest_ws["date"])
+                # elif setup["harvest-date"] == "auto":
+                #     print("Harvest-date:", harvest_ws["latest-date"])
 
                 if not DEBUG_DONOT_SEND:
                     socket.send_json(env_template)
