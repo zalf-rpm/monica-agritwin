@@ -434,8 +434,8 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                 # print "ignoring", result.get("type", "")
                 return
 
-            print("received work result ", process_message.received_env_count, " customId: ",
-                  str(msg.get("customId", "")))
+            # print("received work result ", process_message.received_env_count, " customId: ",
+            #       str(msg.get("customId", "")))
 
             custom_id = msg["customId"]
             is_nodata = custom_id["nodata"]

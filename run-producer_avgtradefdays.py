@@ -748,7 +748,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
                     env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
                         "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
-                print("pathToClimateCSV:", env_template["pathToClimateCSV"])
+                # print("pathToClimateCSV:", env_template["pathToClimateCSV"])
                 if DEBUG_WRITE_CLIMATE:
                     listOfClimateFiles.add(subpath_to_csv)
 
@@ -772,7 +772,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
                 if not DEBUG_DONOT_SEND:
                     socket.send_json(env_template)
-                    print("sent env ", sent_env_count, " customId: ", env_template["customId"])
+                    # print("sent env ", sent_env_count, " customId: ", env_template["customId"])
 
                 sent_env_count += 1
 
