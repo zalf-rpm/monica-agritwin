@@ -28,6 +28,7 @@ import zmq
 import geopandas as gpd
 import rasterio
 from rasterio import features
+import subprocess
 
 import monica_io3
 import soil_io3
@@ -92,11 +93,17 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
 DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
+DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # Lower Saxony 100 m
 # DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
 # DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+# LS_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSdem_100_25832_etrs89-utm32n.asc"
 # DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
+# LS_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSslope_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
+# DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # North Rhine-Westphalia 100 m
 # DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
@@ -196,6 +203,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # height data for germany
     path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
+    if "LS" in DATA_GRID_HEIGHT:
+        subprocess.run(["wget", "-O", path_to_dem_grid, LS_HEIGHT_URL], check=True)
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -207,6 +216,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # slope data
     path_to_slope_grid = paths["path-to-data-dir"] + DATA_GRID_SLOPE
+    if "LS" in DATA_GRID_SLOPE:
+        subprocess.run(["wget", "-O", path_to_slope_grid, LS_SLOPE_URL], check=True)
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
