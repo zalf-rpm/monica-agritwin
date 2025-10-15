@@ -44,8 +44,8 @@ PATHS = {
     }
 }
 
-TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"  # Germany 1000 m
-# TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/buek200_100_25832_etrs89-utm32n.asc"  # Germany 100 m
+#TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"  # Germany 1000 m
+TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/buek200_100_25832_etrs89-utm32n.asc"  # Brandenburg 100 m
 # TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/LSbuek200_100_25832_etrs89-utm32n.asc"  # Lower Saxony 100 m
 # TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/NWbuek200_100_25832_etrs89-utm32n.asc"  # North Rhine-Westphalia 100 m
 # TEMPLATE_LANDUSE_PATH = "{local_path_to_data_dir}germany/landuse_1000_31469_gk5.asc"
@@ -85,7 +85,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
     make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=np.float))
 
     output_grids = {
-        "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
         # "Evapotranspiration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         # "Act_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         # "Pot_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}
@@ -398,7 +398,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
             process_message.wnof_count += 1
 
-            path_to_out_dir = config["csv-out"] + str(setup_id) + "/" + str(row) + "/"
+            path_to_out_dir = config["out"] + str(setup_id) + "/" + str(row) + "/"
             print(path_to_out_dir)
             if not os.path.exists(path_to_out_dir):
                 try:
