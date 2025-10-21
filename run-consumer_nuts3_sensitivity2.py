@@ -379,7 +379,8 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     path_to_out_dir = config["out"]
                     os.makedirs(path_to_out_dir, exist_ok=True)
 
-                    path_to_out_file = f"{path_to_out_dir}/setup-{setup_id}_sensitivity.csv"
+                    #path_to_out_file = f"{path_to_out_dir}/setup-{setup_id}_sensitivity.csv"
+                    path_to_out_file = f"{path_to_out_dir}/setup-{setup_id}_drought.csv"
                     write_header = not os.path.isfile(path_to_out_file)
 
                     with open(path_to_out_file, "a") as _:
