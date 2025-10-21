@@ -298,7 +298,10 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
         "regions": defaultdict(lambda: {
             # "year_to_yields": defaultdict(list),
             "date_to_tradef": defaultdict(list),
-            "stage_to_days_below_dst": defaultdict(list)
+            "stage_to_days_below_dst": defaultdict(list),
+            "cells": set(),
+            "stage_to_cell_below_days": defaultdict(lambda: defaultdict(int)),
+            "stage_to_cell_total_days": defaultdict(lambda: defaultdict(int))
         })
     })
 
@@ -336,6 +339,11 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     region = custom_id.get("nuts3", "UnknownRegion")
                     rdata = sdata["regions"][region]
 
+                    row = custom_id.get("srow")
+                    col = custom_id.get("scol")
+                    if row is not None and col is not None:
+                        rdata["cells"].add((row, col))
+
                     for data in msg.get("data", []):
                         results = data.get("results", [])
                         for vals in results:
@@ -359,12 +367,15 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                     stage = int(vals["Stage"])
                                     threshold = float(sdata["param_value"]) if (sdata["param_value"]
                                                                                 not in [None,"NA"]) else 0.0
-                                    if tradef < threshold:
-                                        rdata["stage_to_days_below_dst"][stage].append(1)
-                                    else:
-                                        rdata["stage_to_days_below_dst"][stage].append(0)
+                                    is_below = tradef < threshold
+                                    rdata["stage_to_days_below_dst"][stage].append(1 if is_below else 0)
 
-                if sdata["no_of_envs_expected"] == sdata["envs_received"]:
+                                    cell = (row, col)
+                                    rdata["stage_to_cell_total_days"][stage][cell] += 1
+                                    if is_below:
+                                        rdata["stage_to_cell_below_days"][stage][cell] += 1
+
+                if sdata["no_of_envs_expected"] and sdata["no_of_envs_expected"] == sdata["envs_received"]:
                     path_to_out_dir = config["out"]
                     os.makedirs(path_to_out_dir, exist_ok=True)
 
@@ -375,7 +386,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                         if write_header:
                             # _.write(f"Year,Yield,{sdata['param_name']},Region\n")
                             # _.write(f"Date,TraDef,{sdata['param_name']},Region\n")
-                            _.write(f"Stage,AvgDaysBelowDST,{sdata['param_name']},Region\n")
+                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},Region\n")
 
                         for region, rdata in sdata["regions"].items():
                             # for year in sorted(rdata["year_to_yields"].keys()):
@@ -388,9 +399,26 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                             #     avg_tradef = round(sum(tradefs) / len(tradefs), 3) if tradefs else -9999
                             #     _.write(f"{date},{avg_tradef},{sdata['param_value']},{region}\n")
 
-                            for stage, counts in sorted(rdata["stage_to_days_below_dst"].items()):
-                                avg_days = round(sum(counts) / len(counts), 2) if counts else -9999
-                                _.write(f"{stage},{avg_days},{sdata['param_value']},{region}\n")
+                            # for stage, counts in sorted(rdata["stage_to_days_below_dst"].items()):
+                            #     avg_days = round(sum(counts) / len(counts), 2) if counts else -9999
+                            #     _.write(f"{stage},{avg_days},{sdata['param_value']},{region}\n")
+
+                            for stage in sorted(rdata["stage_to_cell_total_days"].keys()):
+                                totals = rdata["stage_to_cell_total_days"][stage]
+                                below = rdata["stage_to_cell_below_days"][stage]
+
+                                total_days_all = sum(totals.values())
+                                below_days_all = sum(below.values())
+                                n_cells = len(totals)
+
+                                if n_cells == 0 or total_days_all == 0:
+                                    avg_days = -9999
+                                    total_days = 0
+                                else:
+                                    avg_days = round(below_days_all / total_days_all, 2)
+                                    total_days = round(below_days_all / n_cells, 1)
+
+                                _.write(f"{stage},{avg_days},{total_days},{sdata['param_value']},{region}\n")
 
                     print("last expected env received")
 
