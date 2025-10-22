@@ -60,9 +60,9 @@ PATHS = {
 
 # Brandenburg
 DATA_SOIL_DB = "germany/buek200.sqlite"
-#DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 #DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # maize 2018 irrigation map
 #DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
@@ -91,11 +91,11 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_SLOPE = "germany/HEslope_100_25832_etrs89-utm32n.asc"
 
 # Bavaria
-DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/BAVdem_100_25832_etrs89-utm32n.asc"
-BAV_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/BAVdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/BAVslope_100_25832_etrs89-utm32n.asc"
-BAV_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/BAVslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/BAVdem_100_25832_etrs89-utm32n.asc"
+#BAV_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/BAVdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/BAVslope_100_25832_etrs89-utm32n.asc"
+#BAV_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/BAVslope_100_25832_etrs89-utm32n.asc"
 
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
