@@ -58,7 +58,7 @@
 				["Tavg", "AVG"],
 				["Globrad", "AVG"]
 			],
-			"daily", [
+			"_daily", [
 				"Date",
 				"Crop",
 				"Stage",
@@ -66,6 +66,42 @@
 				"LAI",
 				"Yield",
 				"TraDef"
+			], 
+			{"while": ["Stage", "=", 2]},[
+				["CM-count", "LAST"],
+				["Year", "LAST"],
+				["Crop", "LAST"],
+				["TraDef|TraDef_S2", "AVG"]
+			],
+			{"while": ["Stage", "=", 3]},[
+				["CM-count", "LAST"],
+				["Year", "LAST"],
+				["Crop", "LAST"],
+				["TraDef|TraDef_S3", "AVG"]
+			],
+			{"while": ["Stage", "=", 4]},[
+				["CM-count", "LAST"],
+				["Year", "LAST"],
+				["Crop", "LAST"],
+				["TraDef|TraDef_S3", "AVG"]
+			],
+			{"while": ["Stage", "=", 5]},[
+				["CM-count", "LAST"],
+				["Year", "LAST"],
+				["Crop", "LAST"],
+				["TraDef|TraDef_S3", "AVG"]
+			],
+			{"while": ["Stage", "=", 6]},[
+				["CM-count", "LAST"],
+				["Year", "LAST"],
+				["Crop", "LAST"],
+				["TraDef|TraDef_S3", "AVG"]
+			],
+			{"while": ["Stage", "=", 7]},[
+				["CM-count", "LAST"],
+				["Year", "LAST"],
+				["Crop", "LAST"],
+				["TraDef|TraDef_S3", "AVG"]
 			]
 		]
 	},

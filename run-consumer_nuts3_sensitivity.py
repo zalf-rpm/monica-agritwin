@@ -83,7 +83,13 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         "Evapotranspiration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         "Act_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "Pot_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}
+        "Pot_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "TraDef_S2" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "TraDef_S3" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "TraDef_S4" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "TraDef_S5" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "TraDef_S6" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "TraDef_S7" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
     }
     output_keys = list(output_grids.keys())
 
@@ -387,7 +393,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                         if write_header:
                             # _.write(f"Year,Yield,{sdata['param_name']},Region\n")
                             # _.write(f"Date,TraDef,{sdata['param_name']},Region\n")
-                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},Region\n")
+                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},AvgTraDef,Region\n")
 
                         for region, rdata in sdata["regions"].items():
                             # for year in sorted(rdata["year_to_yields"].keys()):
@@ -407,6 +413,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                             for stage in sorted(rdata["stage_to_cell_total_days"].keys()):
                                 totals = rdata["stage_to_cell_total_days"][stage]
                                 below = rdata["stage_to_cell_below_days"][stage]
+                                #tradefs = rdata["date_to_tradef"][stage]
 
                                 total_days_all = sum(totals.values())
                                 below_days_all = sum(below.values())
