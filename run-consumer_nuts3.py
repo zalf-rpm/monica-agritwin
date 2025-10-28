@@ -81,9 +81,15 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
 
     output_grids = {
         "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "Evapotranspiration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "Act_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        "Pot_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}
+        #"Evapotranspiration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        #"Act_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        #"Pot_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
+        "TraDef_S2" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "TraDef_S3" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "TraDef_S4" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "TraDef_S5" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "TraDef_S6" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        "TraDef_S7" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2}
     }
     output_keys = list(output_grids.keys())
 
@@ -224,7 +230,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
     socket.connect("tcp://" + config["server"] + ":" + config["port"])
     socket.RCVTIMEO = config["timeout"]
     leave = False
-    write_normal_output_files = True
+    write_normal_output_files = False
 
     path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-data-dir"])
     soil_epsg_code = int(path_to_soil_grid.split("/")[-1].split("_")[2])
@@ -397,7 +403,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
             process_message.wnof_count += 1
 
-            path_to_out_dir = os.path.join(config["csv-out"] + str(setup_id) + "/" +  nuts3 + "/" + str(row) + "/")
+            path_to_out_dir = os.path.join(config["out"] + str(setup_id) + "/" +  nuts3 + "/" + str(row) + "/")
             print(path_to_out_dir)
             if not os.path.exists(path_to_out_dir):
                 try:
