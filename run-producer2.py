@@ -78,7 +78,7 @@ PATHS = {
 DATA_SOIL_DB = "germany/buek200.sqlite"
 
 # Germany 1000 m
-DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
 #DATA_GRID_HEIGHT = "germany/raster_backup/dem_1000_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/raster_backup/slope_1000_25832_etrs89-utm32n.asc"
 # DATA_GRID_CROPS = "germany/raster_backup/crop_sm_2018_1000_25832_etrs89-utm32n.asc"  # silage maize 2018 crop map
@@ -97,11 +97,11 @@ DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # Lower Saxony 100 m
-#DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
-#LS_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
-#LS_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+LS_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
+LS_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
