@@ -78,7 +78,7 @@ PATHS = {
 DATA_SOIL_DB = "germany/buek200.sqlite"
 
 # Germany 1000 m
-DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
 #DATA_GRID_HEIGHT = "germany/raster_backup/dem_1000_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/raster_backup/slope_1000_25832_etrs89-utm32n.asc"
 # DATA_GRID_CROPS = "germany/raster_backup/crop_sm_2018_1000_25832_etrs89-utm32n.asc"  # silage maize 2018 crop map
@@ -106,9 +106,9 @@ DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # North Rhine-Westphalia 100 m
-# DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony
 #DATA_GRID_SOIL = "germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
@@ -116,9 +116,9 @@ DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/SAXslope_100_25832_etrs89-utm32n.asc"
 
 # Hessen
-DATA_GRID_SOIL = "germany/HEbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/HEdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/HEslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/HEbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/HEdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/HEslope_100_25832_etrs89-utm32n.asc"
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
