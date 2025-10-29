@@ -223,7 +223,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     if "LS" in DATA_GRID_HEIGHT:
         subprocess.run(["wget", "-O", path_to_dem_grid, LS_HEIGHT_URL], check=True)
     if "BAV" in DATA_GRID_HEIGHT:
-            subprocess.run(["wget", "-O", path_to_dem_grid, BAV_HEIGHT_URL], check=True)
+        subprocess.run(["wget", "-O", path_to_dem_grid, BAV_HEIGHT_URL], check=True)
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
