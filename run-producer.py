@@ -106,9 +106,16 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # North Rhine-Westphalia 100 m
-DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
+
+# Bavaria
+DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/BAVdem_100_25832_etrs89-utm32n.asc"
+BAV_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/BAVdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/BAVslope_100_25832_etrs89-utm32n.asc"
+BAV_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/BAVslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony
 #DATA_GRID_SOIL = "germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
