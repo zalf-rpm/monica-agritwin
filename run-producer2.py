@@ -222,6 +222,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
     if "LS" in DATA_GRID_HEIGHT:
         subprocess.run(["wget", "-O", path_to_dem_grid, LS_HEIGHT_URL], check=True)
+    if "BAV" in DATA_GRID_HEIGHT:
+        subprocess.run(["wget", "-O", path_to_dem_grid, BAV_HEIGHT_URL], check=True)
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -235,6 +237,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     path_to_slope_grid = paths["path-to-data-dir"] + DATA_GRID_SLOPE
     if "LS" in DATA_GRID_SLOPE:
         subprocess.run(["wget", "-O", path_to_slope_grid, LS_SLOPE_URL], check=True)
+    if "BAV" in DATA_GRID_SLOPE:
+        subprocess.run(["wget", "-O", path_to_slope_grid, BAV_SLOPE_URL], check=True)
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
