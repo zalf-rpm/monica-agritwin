@@ -43,6 +43,7 @@ PATHS = {
         "monica-path-to-climate-dir": "/monica_data/climate-data/",
         # mounted path to archive accessable by monica executable
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
+        "path-to-projects-dir": "./data/germany/",
         "path-debug-write-folder": "./debug-out/",
     },
     "mbm-local-remote": {
@@ -70,6 +71,7 @@ PATHS = {
         "monica-path-to-climate-dir": "/monica_data/climate-data/",
         # mounted path to archive accessable by monica executable
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
+        "path-to-projects-dir": "/project/monica-agritwin/",
         "path-debug-write-folder": "/out/debug-out/",
     }
 }

@@ -44,6 +44,7 @@ PATHS = {
         "monica-path-to-climate-dir": "/monica_data/climate-data/",
         # mounted path to archive accessable by monica executable
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
+        "path-to-projects-dir": "./data/germany/",
         "path-debug-write-folder": "./debug-out/",
     },
     "mbm-local-remote": {
@@ -71,6 +72,7 @@ PATHS = {
         "monica-path-to-climate-dir": "/monica_data/climate-data/",
         # mounted path to archive accessable by monica executable
         "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
+        "path-to-projects-dir": "/project/monica-agritwin/",
         "path-debug-write-folder": "/out/debug-out/",
     }
 }
@@ -98,10 +100,8 @@ DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 
 # Lower Saxony 100 m
 #DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
-#LS_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
-#LS_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/LSslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "LSdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "LSslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
@@ -112,10 +112,8 @@ DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 
 # Bavaria
 #DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/BAVdem_100_25832_etrs89-utm32n.asc"
-#BAV_HEIGHT_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/BAVdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/BAVslope_100_25832_etrs89-utm32n.asc"
-#BAV_SLOPE_URL = "https://github.com/zalf-rpm/monica-agritwin/raw/refs/heads/main/data/germany/BAVslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "BAVdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "BAVslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony
 #DATA_GRID_SOIL = "germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
@@ -220,8 +218,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # height data for germany
     path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
-    if "LS" in DATA_GRID_HEIGHT:
-        subprocess.run(["wget", "-O", path_to_dem_grid, LS_HEIGHT_URL], check=True)
+    if "LS" in DATA_GRID_HEIGHT or "BAV" in DATA_GRID_HEIGHT:
+        path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -233,8 +231,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # slope data
     path_to_slope_grid = paths["path-to-data-dir"] + DATA_GRID_SLOPE
-    if "LS" in DATA_GRID_SLOPE:
-        subprocess.run(["wget", "-O", path_to_slope_grid, LS_SLOPE_URL], check=True)
+    if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
+        path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
