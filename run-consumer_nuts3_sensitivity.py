@@ -387,7 +387,8 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                         if write_header:
                             # _.write(f"Year,Yield,{sdata['param_name']},Region\n")
                             # _.write(f"Date,TraDef,{sdata['param_name']},Region\n")
-                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},AvgTraDef,Region\n")
+                            #_.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},AvgTraDef,Region\n")
+                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},Region\n")
 
                         for region, rdata in sdata["regions"].items():
                             # for year in sorted(rdata["year_to_yields"].keys()):
