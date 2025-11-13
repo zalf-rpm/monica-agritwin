@@ -393,10 +393,12 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
                     with open(path_to_out_file, "a") as _:
                         if write_header:
+                            param_name = sdata["param_name"] or "param"
+                            param_value = sdata["param_value"] or "NA"
                             # _.write(f"Year,Yield,{sdata['param_name']},Region\n")
                             # _.write(f"Date,TraDef,{sdata['param_name']},Region\n")
                             # _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},Region\n")
-                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},AvgTraDef,Region,SoilType\n")
+                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{param_name},AvgTraDef,Region,SoilType\n")
 
                         for region, soiltypes in sdata["regions"].items():
                             for soiltype, rdata in soiltypes.items():
@@ -439,8 +441,8 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                     else:
                                         avg_tradef = round(sum(all_tradef_values) / len(all_tradef_values), 3)
 
-                                    _.write(f"{stage},{avg_days},{total_days},{sdata['param_value']},{avg_tradef},"
-                                            f"{region},{soiltype}\n")
+                                    _.write(f"{stage},{avg_days},{total_days},{param_value},{avg_tradef},{region},"
+                                            f"{soiltype}\n")
 
                     print("last expected env received")
 
