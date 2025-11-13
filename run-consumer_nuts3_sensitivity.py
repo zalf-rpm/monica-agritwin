@@ -419,7 +419,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                 for stage in sorted(rdata["stage_to_cell_total_days"].keys()):
                                     totals = rdata["stage_to_cell_total_days"][stage]
                                     below = rdata["stage_to_cell_below_days"][stage]
-                                    tradefs = rdata["date_to_tradef"][stage]
+                                    tradefs = rdata["stage_to_cell_tradef"][stage]
 
                                     total_days_all = sum(totals.values())
                                     below_days_all = sum(below.values())
