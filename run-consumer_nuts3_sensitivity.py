@@ -334,9 +334,10 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                 else:
                     sdata["envs_received"] += 1
 
-                    if not sdata["param_name"]:
+                    if not sdata["param_name"] and "param_name" in custom_id:
                         sdata["param_name"] = custom_id["param_name"]
-                    if not sdata["param_value"]:
+
+                    if not sdata["param_value"] and "param_value" in custom_id:
                         sdata["param_value"] = custom_id["param_value"]
 
                     # Get region name and soil type
