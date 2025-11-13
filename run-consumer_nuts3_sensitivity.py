@@ -191,7 +191,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
     config = {
         "mode": "re-local-remote",  # "mbm-local-remote",
-        "port": server["port"] if server["port"] else "7780",
+        "port": server["port"] if server["port"] else "7778",
         "server": server["server"] if server["server"] else "login01.cluster.zalf.de",
         "start-row": "0",
         "end-row": "-1",
@@ -295,14 +295,18 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
         "envs_received": 0,
         "no_of_envs_expected": None,
         "out_dir_exists": False,
-        "regions": defaultdict(lambda: {
-            # "year_to_yields": defaultdict(list),
-            "date_to_tradef": defaultdict(list),
-            "stage_to_days_below_dst": defaultdict(list),
-            "cells": set(),
-            "stage_to_cell_below_days": defaultdict(lambda: defaultdict(int)),
-            "stage_to_cell_total_days": defaultdict(lambda: defaultdict(int))
-        })
+        "regions": defaultdict(
+            lambda: defaultdict(
+                lambda: {
+                    "date_to_tradef": defaultdict(list),
+                    "stage_to_days_below_dst": defaultdict(list),
+                    "cells": set(),
+                    "stage_to_cell_below_days": defaultdict(lambda: defaultdict(int)),
+                    "stage_to_cell_total_days": defaultdict(lambda: defaultdict(int)),
+                    "stage_to_cell_tradef": defaultdict(lambda: defaultdict(list))
+                }
+            )
+        )
     })
 
     def process_message(msg):
@@ -335,9 +339,11 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     if not sdata["param_value"]:
                         sdata["param_value"] = custom_id["param_value"]
 
-                    # Get region name
+                    # Get region name and soil type
                     region = custom_id.get("nuts3", "UnknownRegion")
-                    rdata = sdata["regions"][region]
+                    soiltype = custom_id.get("soiltype", "UnknownSoil")
+
+                    rdata = sdata["regions"][region][soiltype]
 
                     row = custom_id.get("srow")
                     col = custom_id.get("scol")
@@ -365,6 +371,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                 # Count days below DroughtStressThreshold per stage
                                 if "Stage" in vals:
                                     stage = int(vals["Stage"])
+                                    rdata["stage_to_cell_tradef"][stage][(row, col)].append(tradef)
                                     threshold = float(sdata["param_value"]) if (sdata["param_value"]
                                                                                 not in [None,"NA"]) else 0.0
                                     is_below = tradef < threshold
@@ -387,10 +394,11 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                         if write_header:
                             # _.write(f"Year,Yield,{sdata['param_name']},Region\n")
                             # _.write(f"Date,TraDef,{sdata['param_name']},Region\n")
-                            #_.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},AvgTraDef,Region\n")
-                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},Region\n")
+                            # _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},Region\n")
+                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},AvgTraDef,Region,SoilType\n")
 
-                        for region, rdata in sdata["regions"].items():
+                        for region, soiltypes in sdata["regions"].items():
+                            for soiltype, rdata in soiltypes.items():
                             # for year in sorted(rdata["year_to_yields"].keys()):
                             #     yields = rdata["year_to_yields"][year]
                             #     avg_yield = round(sum(yields) / len(yields), 2) if yields else -9999
@@ -405,23 +413,33 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                             #     avg_days = round(sum(counts) / len(counts), 2) if counts else -9999
                             #     _.write(f"{stage},{avg_days},{sdata['param_value']},{region}\n")
 
-                            for stage in sorted(rdata["stage_to_cell_total_days"].keys()):
-                                totals = rdata["stage_to_cell_total_days"][stage]
-                                below = rdata["stage_to_cell_below_days"][stage]
-                                #tradefs = rdata["date_to_tradef"][stage]
+                                for stage in sorted(rdata["stage_to_cell_total_days"].keys()):
+                                    totals = rdata["stage_to_cell_total_days"][stage]
+                                    below = rdata["stage_to_cell_below_days"][stage]
+                                    tradefs = rdata["date_to_tradef"][stage]
 
-                                total_days_all = sum(totals.values())
-                                below_days_all = sum(below.values())
-                                n_cells = len(totals)
+                                    total_days_all = sum(totals.values())
+                                    below_days_all = sum(below.values())
+                                    n_cells = len(totals)
 
-                                if n_cells == 0 or total_days_all == 0:
-                                    avg_days = -9999
-                                    total_days = 0
-                                else:
-                                    avg_days = round(below_days_all / total_days_all, 2)
-                                    total_days = round(below_days_all / n_cells, 1)
+                                    if n_cells == 0 or total_days_all == 0:
+                                        avg_days = -9999
+                                        total_days = 0
+                                    else:
+                                        avg_days = round(below_days_all / total_days_all, 2)
+                                        total_days = round(below_days_all / n_cells, 1)
 
-                                _.write(f"{stage},{avg_days},{total_days},{sdata['param_value']},{region}\n")
+                                    all_tradef_values = []
+                                    for cell, vals in tradefs.items():
+                                        all_tradef_values.extend(vals)
+
+                                    if len(all_tradef_values) == 0:
+                                        avg_tradef = -9999
+                                    else:
+                                        avg_tradef = round(sum(all_tradef_values) / len(all_tradef_values), 3)
+
+                                    _.write(f"{stage},{avg_days},{total_days},{sdata['param_value']},{avg_tradef},"
+                                            f"{region},{soiltype}\n")
 
                     print("last expected env received")
 
@@ -520,10 +538,12 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
             # ccol = custom_id.get("ccol", -1)
             # soil_id = custom_id.get("soil_id", -1)
             nuts3 = custom_id["nuts3"]
+            soiltype = custom_id["soiltype"]
 
             process_message.wnof_count += 1
 
-            path_to_out_dir = os.path.join(config["csv-out"] + str(setup_id) + "/" +  nuts3 + "/" + str(row) + "/")
+            path_to_out_dir = os.path.join(config["csv-out"] + str(setup_id) + "/" +  nuts3 + "/" + soiltype + str(row)
+                                           + "/")
             print(path_to_out_dir)
             if not os.path.exists(path_to_out_dir):
                 try:

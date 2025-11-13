@@ -100,14 +100,21 @@ TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
 TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
 
+TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
+
 # Additional data for masking the regions
 NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
-
-TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
 
 gdf = gpd.read_file(NUTS3_REGIONS)
 gdf["NUTS_ID_INT"] = gdf["NUTS_NAME"].astype("category").cat.codes
 nuts3_lookup = dict(zip(gdf["NUTS_ID_INT"], gdf["NUTS_NAME"]))
+
+# Soil type data
+SOILTYPE = "data/germany/buek1000en_v21_25832.shp"
+
+gdf_soiltype = gpd.read_file(SOILTYPE)
+gdf_soiltype["SOILTYPE_ID_INT"] = gdf_soiltype.index.astype(int)
+soiltype_lookup = dict(zip(gdf["SOILTYPE_ID_INT"], gdf["LEGEND"]))
 
 DEBUG_DONOT_SEND = False
 DEBUG_WRITE = False
@@ -123,7 +130,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     config = {
         "mode": "re-local-remote",
-        "server-port": server["port"] if server["port"] else "6669",
+        "server-port": server["port"] if server["port"] else "6667",
         "server": server["server"] if server["server"] else "login01.cluster.zalf.de",
         "start-row": "0",
         "end-row": "-1",
@@ -131,8 +138,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "sim.json": "sim_sensitivity.json",
         "crop.json": "crop.json",
         "site.json": "site.json",
-        "setups-file": "sim_setups_nuts3_sensitivity.csv",
-        "run-setups": "[1]",
+        "setups-file": "sim_setups_nuts3_notsensitivity.csv",
+        "run-setups": "[15]",
         "shared_id": shared_id
     }
 
@@ -330,6 +337,10 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         nuts3_raster = rasterize(((geom, value) for geom, value in zip(gdf.geometry, gdf["NUTS_ID_INT"])),
                                  out_shape=(srows, scols), transform=transform, fill=nodata_value, dtype='int32')
 
+        # Rasterize soil type shapefile
+        soiltype_raster = rasterize(((geom, value) for geom, value in zip(gdf_soiltype.geometry, gdf_soiltype["SOILTYPE_ID_INT"])),
+                                      out_shape=(srows, scols), transform=transform, fill=nodata_value, dtype='int32')
+
         # Check if sensitivity analysis is requested and deep copy crop parameters for modification
         is_sensitivity_analysis = False
         orig_params = None
@@ -374,6 +385,10 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 # target_regions = ["Goslar", "Cuxhaven"]
                 # if region_name not in target_regions:
                 #     continue
+
+                # Get the soil type for the current grid cell
+                soiltype_id = int(soiltype_raster[srow, scol])
+                soiltype_name = soiltype_lookup[soiltype_id] if soiltype_id != nodata_value else None
 
                 # Apply sensitivity analysis to crop parameters based on setup:
                 # Multiply parameter list by coefficient if specified
@@ -734,6 +749,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     "env_id": sent_env_count,
                     "nodata": False,
                     "nuts3": region_name,
+                    "soiltype": soiltype_name,
                     "is_sensitivity_analysis": is_sensitivity_analysis,
                     "param_name": p_name,
                     "param_value": p_value
