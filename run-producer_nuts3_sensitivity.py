@@ -114,7 +114,7 @@ SOILTYPE = "data/germany/buek1000en_v21_25832.shp"
 
 gdf_soiltype = gpd.read_file(SOILTYPE)
 gdf_soiltype["SOILTYPE_ID_INT"] = gdf_soiltype.index.astype(int)
-soiltype_lookup = dict(zip(gdf["SOILTYPE_ID_INT"], gdf["LEGEND"]))
+soiltype_lookup = dict(zip(gdf_soiltype["SOILTYPE_ID_INT"], gdf_soiltype["LEGEND"]))
 
 DEBUG_DONOT_SEND = False
 DEBUG_WRITE = False
