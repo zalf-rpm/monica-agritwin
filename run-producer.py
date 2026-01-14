@@ -127,6 +127,7 @@ DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
+# TEMPLATE_PATH_LATLON = "data/latlon-to-rowcol.json"  # climate projection
 # TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"  # historical
 TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"  # climate projection
 
@@ -156,10 +157,10 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "start-row": "0",
         "end-row": "-1",
         "path_to_dem_grid": "",
-        "sim.json": "sim.json",
+        "sim.json": "sim_projection.json",
         "crop.json": "crop.json",
         "site.json": "site.json",
-        "setups-file": "sim_setups_germany.csv",
+        "setups-file": "sim_setups_projection.csv",
         "run-setups": "[1]",
         "shared_id": shared_id
     }
@@ -269,20 +270,20 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     irrigation_manager = IrrigationManager("irrigated_crops.json")
 
     # Create the function for the mask. This function will later use the additional column in a setup file!
-    def create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid):
-        regions_df = gpd.read_file(NUTS1_REGIONS)
-        region = regions_df[regions_df["NUTS_NAME"] == region_name]
-
-        # This is needed to read the transformation data correctly from the file. With the original opening it does not work
-        with rasterio.open(path_to_soil_grid) as dataset:
-            soil_grid = dataset.read(1)
-            transform = dataset.transform
-
-        rows, cols = soil_grid.shape
-        mask = rasterio.features.geometry_mask([region.geometry.values[0]], out_shape=(rows, cols), transform=transform,
-                                               invert=True)
-
-        return mask
+    # def create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid):
+    #     regions_df = gpd.read_file(NUTS1_REGIONS)
+    #     region = regions_df[regions_df["NUTS_NAME"] == region_name]
+    #
+    #     # This is needed to read the transformation data correctly from the file. With the original opening it does not work
+    #     with rasterio.open(path_to_soil_grid) as dataset:
+    #         soil_grid = dataset.read(1)
+    #         transform = dataset.transform
+    #
+    #     rows, cols = soil_grid.shape
+    #     mask = rasterio.features.geometry_mask([region.geometry.values[0]], out_shape=(rows, cols), transform=transform,
+    #                                            invert=True)
+    #
+    #     return mask
 
     sent_env_count = 0
     start_time = time.perf_counter()
@@ -321,15 +322,15 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
         print("read: ", path_to_crop_grid)
 
-        if region_name and len(region_name) > 0:
-            # Create the soil mask for the specific region
-            path_to_soil_grid = paths["path-to-data-dir"] + DATA_GRID_SOIL
-            mask = create_mask_from_shapefile(NUTS3_REGIONS, region_name, path_to_soil_grid)
-
-            # Apply the soil mask to the soil grid
-            soil_grid_copy = soil_grid.copy()
-            soil_grid[mask == False] = -8888
-            soil_grid[soil_grid_copy == -9999] = -9999
+        # if region_name and len(region_name) > 0:
+        #     # Create the soil mask for the specific region
+        #     path_to_soil_grid = paths["path-to-data-dir"] + DATA_GRID_SOIL
+        #     mask = create_mask_from_shapefile(NUTS3_REGIONS, region_name, path_to_soil_grid)
+        #
+        #     # Apply the soil mask to the soil grid
+        #     soil_grid_copy = soil_grid.copy()
+        #     soil_grid[mask == False] = -8888
+        #     soil_grid[soil_grid_copy == -9999] = -9999
 
         # add crop id from setup file
         try:

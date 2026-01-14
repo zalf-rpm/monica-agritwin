@@ -7,17 +7,17 @@
 	"climate.csv-options": {
 		"_start-date": "1991-01-01",
         "_end-date": "2017-12-31",
-        "no-of-climate-file-header-lines": 1,
-        "csv-separator": "\t",
+        "no-of-climate-file-header-lines": 2,
+        "csv-separator": ",",
         "header-to-acd-names": {
-			"Date": "iso-date",
-			"TempMin": "tmin",
-			"TempMean": "tavg",
-			"TempMax": "tmax",
-            "Precipitation": "precip",
-            "RelHumCalc": "relhumid",
-			"Radiation": "globrad",
-			"Windspeed": "wind"
+			"iso-date": "iso-date",
+			"tmin": "tmin",
+			"tavg": "tavg",
+			"tmax": "tmax",
+            "precip": "precip",
+            "relhumid": "relhumid",
+			"globrad": "globrad",
+			"wind": "wind"
         }
     },
 	
