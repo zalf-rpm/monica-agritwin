@@ -80,9 +80,9 @@ PATHS = {
 DATA_SOIL_DB = "germany/buek200.sqlite"
 
 # Germany 1000 m
-#DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/raster_backup/dem_1000_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/raster_backup/slope_1000_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/raster_backup/dem_1000_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/raster_backup/slope_1000_25832_etrs89-utm32n.asc"
 # DATA_GRID_CROPS = "germany/raster_backup/crop_sm_2018_1000_25832_etrs89-utm32n.asc"  # silage maize 2018 crop map
 #DATA_GRID_CROPS = "germany/raster_backup/crop_ww_2018_1000_25832_etrs89-utm32n.asc"  # winter wheat 2018 crop map
 # DATA_GRID_CROPS = "germany/raster_backup/crop_po_2018_1000_25832_etrs89-utm32n.asc"  # potato 2018 crop map
@@ -92,9 +92,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 # DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 
 # Brandenburg 100 m
-DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
 #DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
