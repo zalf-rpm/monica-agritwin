@@ -80,7 +80,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         write_row_to_grids.nodata_row_count = defaultdict(lambda: 0)
         write_row_to_grids.list_of_output_files = defaultdict(list)
 
-    make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=np.float))
+    make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=float))
 
     output_grids = {
         "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2}
@@ -127,7 +127,15 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
                         for key, vals in key_to_vals.items():
                             output_vals = output_grids[key]["data"]
                             if len(vals) > 0:
-                                output_vals[(cm_count, year)][col] = sum(vals) / len(vals)
+                                # output_vals[(cm_count, year)][col] = sum(vals) / len(vals)
+
+                                val = sum(vals) / len(vals)
+
+                                if key == "Yield":
+                                    # Convert yield from kg/ha to dt/ha
+                                    val = round(val / 100.0, 2)
+
+                                output_vals[(cm_count, year)][col] = val
                             else:
                                 output_vals[(cm_count, year)][col] = -9999
 
@@ -421,11 +429,29 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
                         # for row in monica_io3.write_output(output_ids, results):
                         #     writer.writerow(row)
+
+                        # for result in results:
+                        #     row = []
+                        #     for output_id in output_ids:
+                        #         field_name = output_id["name"]
+                        #         row.append(result.get(field_name, ""))
+                        #     writer.writerow(row)
+
                         for result in results:
+                            if not result:
+                                continue
+
                             row = []
                             for output_id in output_ids:
                                 field_name = output_id["name"]
-                                row.append(result.get(field_name, ""))
+                                v = result.get(field_name, "")
+
+                                # Convert yield from kg/ha to dt/ha
+                                if field_name == "Yield" and v != "" and v is not None:
+                                    v = round(float(v) / 100.0, 2)
+
+                                row.append(v)
+
                             writer.writerow(row)
 
                 writer.writerow([])
