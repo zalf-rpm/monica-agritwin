@@ -54,6 +54,7 @@ This setup runs MONICA simulations with explicit irrigation events derived from 
     - the crop is listed as irrigated in `irrigated_crops.json`, and
     - the irrigation grid value for that cell is > 0 (This is handled inside the irrigation manager).
 - **`run-consumer_irrigation.py`**: Consumer script to aggregate irrigation simulation outputs.
+  - Yield results are converted from kg/ha DM to dt/ha DM.
 - **`sim_setups_irrigation.csv`**: CSV file defining simulation setups for irrigation simulations
 - **`sim_irrigation.json`**: Sim JSON used for this setup
 - **`irrigation_manager.py`**: Helper module to translate irrigation grids into irrigation worksteps
