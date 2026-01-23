@@ -39,7 +39,25 @@ This repository contains MONICA simulation setups for the EOAgriTwin project.
 - **`run-producer_avgtradefdays_sm.py`**: Producer script for average transpiration deficit days below drought stress threshold simulations for silage maize
 - **`run-consumer_avgtradefdays.py`**: Consumer script to aggregate average transpiration deficit days below drought stress threshold per stage results into ASCII grid files
 - **`run-consumer_avgtradefdays_sm.py`**: Consumer script to aggregate average transpiration deficit days below drought stress threshold per stage results for silage maize into ASCII grid files
-- **`sim_setups_germany`**: CSV file defining simulation setups for average transpiration deficit days below drought stress threshold simulations for winter wheat
-- **`sim_setups_germany_sm`**: CSV file defining simulation setups for average transpiration deficit days below drought stress threshold simulations for silage maize
+- **`sim_setups_germany.csv`**: CSV file defining simulation setups for average transpiration deficit days below drought stress threshold simulations for winter wheat
+- **`sim_setups_germany_sm.csv`**: CSV file defining simulation setups for average transpiration deficit days below drought stress threshold simulations for silage maize
 - **`sim_avgtradefdays.json`**: Sim JSON used for this setup for winter wheat
 - **`sim_avgtradefdays_sm.json`**: Sim JSON used for this setup for silage maize
+
+### Irrigation Simulation
+
+This setup runs MONICA simulations with explicit irrigation events derived from irrigation grids. Irrigation is applied as worksteps that are appended to the crop rotation worksteps.
+
+- **`run-producer_irrigation.py`**: Producer script for irrigation simulations.
+  - Adds irrigation worksteps only when:
+    - irrigation is enabled in the `sim_setups_irrigation.csv`,
+    - the crop is listed as irrigated in `irrigated_crops.json`, and
+    - the irrigation grid value for that cell is > 0 (This is handled inside the irrigation manager).
+- **`run-consumer_irrigation.py`**: Consumer script to aggregate irrigation simulation outputs.
+- **`sim_setups_irrigation.csv`**: CSV file defining simulation setups for irrigation simulations
+- **`sim_irrigation.json`**: Sim JSON used for this setup
+- **`irrigation_manager.py`**: Helper module to translate irrigation grids into irrigation worksteps
+  - Reads irrigation grid time series from a folder (ASC files with dates in the filename, e.g., `BB_iwu_2017-04-21_100_25832_etrs89-utm32n.asc`)
+  - Each grid represents a 14-day irrigation total ending on the date in the filename.
+  - Irrigation events are distributed across dates within that 14-day window (e.g., every 3 days)
+- **`irrigated_crops.json`**: Defines which crops or cultivars are irrigated
