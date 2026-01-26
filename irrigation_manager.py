@@ -93,58 +93,98 @@ class IrrigationManager:
         if not hasattr(self, "_irr_periods"):
             raise RuntimeError("IrrigationManager not configured. Call configure_grid_series(...) first.")
 
+        def _get_period_plan(sim_start_, sim_end_, irrig_start_, irrig_end_):
+            key = (sim_start_, sim_end_, irrig_start_, irrig_end_, self._period_days)
+
+            if not hasattr(self, "_period_plan_cache"):
+                self._period_plan_cache = {}
+            if key in self._period_plan_cache:
+                return self._period_plan_cache[key]
+
+            # Build irrigation windows once
+            irrig_windows = []
+            for y in range(sim_start_.year, sim_end_.year + 1):
+                w0 = datetime(y, irrig_start_[0], irrig_start_[1]).date()
+                w1 = datetime(y, irrig_end_[0], irrig_end_[1]).date()
+                irrig_windows.append((w0, w1))
+
+            # Function to calculate overlapping days between grid's 14-day window and irrigation windows
+            def overlap_days(start_a, end_a, start_b, end_b):
+                overlap_start = max(start_a, start_b)
+                overlap_end = min(end_a, end_b)
+                if overlap_end < overlap_start:
+                    return 0
+                return (overlap_end - overlap_start).days + 1
+
+            # Function to check if a date is within any irrigation window
+            def in_irrigation_window(d):
+                for wstart, wend in irrig_windows:
+                    if wstart <= d <= wend:
+                        return True
+                return False
+
+            plan = []
+            for p in self._irr_periods:
+                # Skip periods outside the sim window
+                if p["window_end"] < sim_start_ or p["window_start"] > sim_end_:
+                    continue
+
+                # Calculate overlap between the irrigation window and the grid's 14-day window
+                irrigation_window_overlap = 0
+                for wstart, wend in irrig_windows:
+                    irrigation_window_overlap += overlap_days(p["window_start"], p["window_end"], wstart, wend)
+
+                irrigation_window_overlap = min(irrigation_window_overlap, self._period_days)
+                if irrigation_window_overlap <= 0:
+                    continue
+
+                overlap_factor = irrigation_window_overlap / float(self._period_days)
+
+                # Select irrigation event dates within the simulation window and irrigation windows
+                dates = [d for d in p["event_dates"] if sim_start_ <= d <= sim_end_ and in_irrigation_window(d)]
+                if not dates:
+                    continue
+
+                plan.append({
+                    "file": p["file"],
+                    "overlap_factor": overlap_factor,
+                    "dates": dates,
+                })
+
+            self._period_plan_cache[key] = plan
+            return plan
+
         worksteps = []
         scheduled_dates = set()
 
-        irrig_windows = []
+        plan = _get_period_plan(sim_start, sim_end, irrig_start, irrig_end)
 
-        # Creates date ranges for irrigation windows
-        for y in range(sim_start.year, sim_end.year + 1):
-            s0 = datetime(y, irrig_start[0], irrig_start[1])
-            s1 = datetime(y, irrig_end[0], irrig_end[1])
-            irrig_windows.append((s0.date(), s1.date()))
+        # Cache transformed coordinates
+        transformed_xy = {}
 
-        # Function to check if a date is within any irrigation window
-        def in_irrigation_window(d):
-            for wstart, wend in irrig_windows:
-                if wstart <= d <= wend:
-                    return True
-            return False
+        for item in plan:
+            # Get interpolator, CRS, and nodata for this irrigation grid
+            irr_crs, interp, nodata = self._grid_cache.get_interp(item["file"])
 
-        # Function to calculate overlapping days between grid's 14-day window and irrigation windows
-        def overlap_days(start_a, end_a, start_b, end_b):
-            overlap_start = max(start_a, start_b)
-            overlap_end = min(end_a, end_b)
-            if overlap_end < overlap_start:
-                return 0
-            return (overlap_end - overlap_start).days + 1
-
-        for p in self._irr_periods:
-            # Skip periods outside the sim window
-            if p["window_end"] < sim_start or p["window_start"] > sim_end:
-                continue
+            # Transform soil coordinates to irrigation grid CRS once per CRS and reuse
+            if irr_crs in transformed_xy:
+                rr, rh = transformed_xy[irr_crs]
+            else:
+                rr, rh = self._grid_cache.transform_to_irr_crs(irr_crs, sr, sh)
+                transformed_xy[irr_crs] = (rr, rh)
 
             # Read irrigation amount for this cell from the grid
-            total_mm = self._grid_cache.value_mm(p["file"], sr, sh)
+            total_mm = self._grid_cache.value_mm_transformed(interp, nodata, rr, rh)
             if total_mm is None or total_mm <= 0:
                 continue
 
-            # Calculate overlap between the irrigation window and the grid's 14-day window
-            irrigation_window_overlap = 0
-            for wstart, wend in irrig_windows:
-                irrigation_window_overlap += overlap_days(p["window_start"], p["window_end"], wstart, wend)
-
-            irrigation_window_overlap = min(irrigation_window_overlap, self._period_days)
-            if irrigation_window_overlap <= 0:
-                continue
-
             # Scale total irrigation amount based on overlap with irrigation windows
-            scaled_total = total_mm * (irrigation_window_overlap / float(self._period_days))
+            scaled_total = total_mm * item["overlap_factor"]
             if scaled_total <= 0:
                 continue
 
             # Select irrigation event dates within the simulation window and irrigation windows
-            dates_to_use = [d for d in p["event_dates"]  if sim_start <= d <= sim_end and in_irrigation_window(d) and d not in scheduled_dates]
+            dates_to_use = [d for d in item["dates"] if d not in scheduled_dates]
             if not dates_to_use:
                 continue
 
@@ -231,7 +271,7 @@ class _IrrigationGridCache:
         irr_crs = CRS.from_epsg(epsg_code)
 
         if irr_crs not in self.soil_crs_to_x_transformers:
-            self.soil_crs_to_x_transformers[irr_crs] = Transformer.from_crs(self.soil_crs, irr_crs)
+            self.soil_crs_to_x_transformers[irr_crs] = Transformer.from_crs(self.soil_crs, irr_crs, always_xy=True)
 
         meta, _ = self.Mrunlib.read_header(fp)
         grid = np.loadtxt(fp, dtype=float, skiprows=6)
@@ -241,9 +281,18 @@ class _IrrigationGridCache:
         self.cache[fp] = (irr_crs, interp, nodata)
         return self.cache[fp]
 
-    def value_mm(self, fp, sr, sh):
-        irr_crs, interp, nodata = self._get_interp(fp)
-        rr, rh = self.soil_crs_to_x_transformers[irr_crs].transform(sr, sh)
+    def get_interp(self, fp):
+        return self._get_interp(fp)
+
+    def transform_to_irr_crs(self, irr_crs, sr, sh):
+        if irr_crs == self.soil_crs:
+            return sr, sh
+        transformer = self.soil_crs_to_x_transformers[irr_crs]
+        rr, rh = transformer.transform(sr, sh)
+        return rr, rh
+
+    @staticmethod
+    def value_mm_transformed(interp, nodata, rr, rh):
         v = interp(rr, rh)
         if isinstance(v, np.ndarray):
             v = v.item()
