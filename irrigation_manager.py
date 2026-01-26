@@ -163,8 +163,8 @@ class IrrigationManager:
         transformed_xy = {}
 
         for item in plan:
-            # Get interpolator, CRS, and nodata for this irrigation grid
-            irr_crs, interp, nodata = self._grid_cache.get_interp(item["file"])
+            # Get grid, CRS, and nodata for this irrigation grid
+            irr_crs, grid_geom, grid = self._grid_cache.get_interp(item["file"])
 
             # Transform soil coordinates to irrigation grid CRS once per CRS and reuse
             if irr_crs in transformed_xy:
@@ -174,7 +174,7 @@ class IrrigationManager:
                 transformed_xy[irr_crs] = (rr, rh)
 
             # Read irrigation amount for this cell from the grid
-            total_mm = self._grid_cache.value_mm_transformed(interp, nodata, rr, rh)
+            total_mm = self._grid_cache.value_mm_transformed(grid_geom, grid, rr, rh)
             if total_mm is None or total_mm <= 0:
                 continue
 
@@ -258,10 +258,13 @@ class _IrrigationGridCache:
         self.soil_crs_to_x_transformers = soil_crs_to_x_transformers
         self.Mrunlib = Mrunlib
         self.cache = {}
+        self._loads = 0
 
     def _get_interp(self, fp):
         if fp in self.cache:
             return self.cache[fp]
+
+        self._loads += 1
 
         # Extract EPSG code from filename
         parts = os.path.basename(fp).split("_")
@@ -275,10 +278,20 @@ class _IrrigationGridCache:
 
         meta, _ = self.Mrunlib.read_header(fp)
         grid = np.loadtxt(fp, dtype=float, skiprows=6)
-        interp = self.Mrunlib.create_ascii_grid_interpolator(grid, meta)
         nodata = float(meta["nodata_value"])
 
-        self.cache[fp] = (irr_crs, interp, nodata)
+        cs = float(meta["cellsize"])
+        grid_geom = (
+            int(meta["ncols"]),
+            int(meta["nrows"]),
+            cs,
+            1.0 / cs,
+            float(meta["xllcorner"]),
+            float(meta["yllcorner"]),
+            nodata
+        )
+
+        self.cache[fp] = (irr_crs, grid_geom, grid)
         return self.cache[fp]
 
     def get_interp(self, fp):
@@ -292,13 +305,23 @@ class _IrrigationGridCache:
         return rr, rh
 
     @staticmethod
-    def value_mm_transformed(interp, nodata, rr, rh):
-        v = interp(rr, rh)
-        if isinstance(v, np.ndarray):
-            v = v.item()
-        if v is None:
+    def value_mm_transformed(grid_geom, grid, rr, rh):
+        if not hasattr(_IrrigationGridCache, "_interp_calls"):
+            _IrrigationGridCache._interp_calls = 0
+        _IrrigationGridCache._interp_calls += 1
+
+        ncols, nrows, cs, inv_cs, xll, yll, nodata = grid_geom
+
+        col = int((rr - xll) * inv_cs)
+        if col < 0 or col >= ncols:
             return None
-        v = float(v)
+
+        row_from_bottom = int((rh - yll) * inv_cs)
+        row = (nrows - 1) - row_from_bottom
+        if row < 0 or row >= nrows:
+            return None
+
+        v = float(grid[row, col])
         if v == nodata:
             return None
         return v
