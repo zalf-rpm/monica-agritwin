@@ -332,12 +332,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 if soil_id == nodata_value:
                     continue
 
-                # get coordinate of clostest climate element of real soil-cell
-                sh = yllcorner + (scellsize / 2) + (srows - srow - 1) * scellsize
-                sr = xllcorner + (scellsize / 2) + scol * scellsize
-                # inter = crow/ccol encoded into integer
-                crow, ccol = climate_data_interpolator(sr, sh)
-
                 crop_grid_id = int(crop_grid[srow, scol])
                 # print(crop_grid_id)
                 if crop_grid_id != 1 or soil_id == -8888:
@@ -345,7 +339,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     env_template["customId"] = {
                         "setup_id": setup_id,
                         "srow": srow, "scol": scol,
-                        "crow": int(crow), "ccol": int(ccol),
+                        # "crow": int(crow), "ccol": int(ccol),
                         "soil_id": soil_id,
                         "env_id": sent_env_count,
                         "nodata": True,
@@ -355,6 +349,12 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
                         sent_env_count += 1
                     continue
+
+                # get coordinate of closest climate element of real soil-cell
+                sh = yllcorner + (scellsize / 2) + (srows - srow - 1) * scellsize
+                sr = xllcorner + (scellsize / 2) + scol * scellsize
+                # inter = crow/ccol encoded into integer
+                crow, ccol = climate_data_interpolator(sr, sh)
 
                 tcoords = {}
 
@@ -511,7 +511,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     env_template["customId"] = {
                         "setup_id": setup_id,
                         "srow": srow, "scol": scol,
-                        "crow": int(crow), "ccol": int(ccol),
+                        # "crow": int(crow), "ccol": int(ccol),
                         "soil_id": soil_id,
                         "env_id": sent_env_count,
                         "nodata": True,
