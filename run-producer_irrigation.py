@@ -238,7 +238,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
         crop_meta, _ = Mrunlib.read_header(path_to_crop_grid)
         crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
-        crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
+        # crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
         print("read: ", path_to_crop_grid)
 
         # add crop id from setup file
@@ -337,18 +337,18 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 # print(crop_grid_id)
                 if crop_grid_id != 1 or soil_id == -8888:
                     # print("row/col:", srow, "/", scol, "is not a crop pixel.")
-                    env_template["customId"] = {
-                        "setup_id": setup_id,
-                        "srow": srow, "scol": scol,
-                        # "crow": int(crow), "ccol": int(ccol),
-                        "soil_id": soil_id,
-                        "env_id": sent_env_count,
-                        "nodata": True,
-                    }
-                    if not DEBUG_DONOT_SEND:
-                        socket.send_json(env_template)
-                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
-                        sent_env_count += 1
+                    # env_template["customId"] = {
+                    #     "setup_id": setup_id,
+                    #     "srow": srow, "scol": scol,
+                    #     # "crow": int(crow), "ccol": int(ccol),
+                    #     "soil_id": soil_id,
+                    #     "env_id": sent_env_count,
+                    #     "nodata": True,
+                    # }
+                    # if not DEBUG_DONOT_SEND:
+                    #     socket.send_json(env_template)
+                    #     # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
+                    #     sent_env_count += 1
                     continue
 
                 # get coordinate of closest climate element of real soil-cell
@@ -509,18 +509,18 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     # print("row/col:", srow, "/", scol, "has unknown soil_id:", soil_id)
                     # unknown_soil_ids.add(soil_id)
 
-                    env_template["customId"] = {
-                        "setup_id": setup_id,
-                        "srow": srow, "scol": scol,
-                        # "crow": int(crow), "ccol": int(ccol),
-                        "soil_id": soil_id,
-                        "env_id": sent_env_count,
-                        "nodata": True,
-                    }
-                    if not DEBUG_DONOT_SEND:
-                        socket.send_json(env_template)
-                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
-                        sent_env_count += 1
+                    # env_template["customId"] = {
+                    #     "setup_id": setup_id,
+                    #     "srow": srow, "scol": scol,
+                    #     # "crow": int(crow), "ccol": int(ccol),
+                    #     "soil_id": soil_id,
+                    #     "env_id": sent_env_count,
+                    #     "nodata": True,
+                    # }
+                    # if not DEBUG_DONOT_SEND:
+                    #     socket.send_json(env_template)
+                    #     # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
+                    #     sent_env_count += 1
                     continue
 
                 if dem_crs not in tcoords:
