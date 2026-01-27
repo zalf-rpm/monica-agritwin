@@ -65,7 +65,7 @@ class IrrigationManager:
         return False
 
     def configure_grid_series(self, irr_folder_abs, soil_crs, soil_crs_to_x_transformers, Mrunlib, period_days=14,
-                              spacing_days=3):
+                              spacing_days=3, preload=True):
         """ Configure and preload a time series of irrigation grids from the given folder."""
         self._irr_folder_abs = irr_folder_abs
         self._period_days = period_days
@@ -88,6 +88,10 @@ class IrrigationManager:
 
         self._grid_cache = _IrrigationGridCache(soil_crs, soil_crs_to_x_transformers, Mrunlib)
 
+        if preload:
+            for last_date, fp in self._irr_files:
+                self._grid_cache.get_interp(fp)
+
     def build_irrigation_worksteps_for_cell(self, sr, sh, sim_start, sim_end, irrig_start=(6, 1), irrig_end=(8, 31)):
         """ Returns list of irrigation worksteps for the cell"""
         if not hasattr(self, "_irr_periods"):
@@ -108,6 +112,9 @@ class IrrigationManager:
                 w1 = datetime(y, irrig_end_[0], irrig_end_[1]).date()
                 irrig_windows.append((w0, w1))
 
+            # Pre-filter periods based on sim window
+            relevant_periods = [p for p in self._irr_periods if p["window_end"] >= sim_start_ and p["window_start"] <= sim_end_]
+
             # Function to calculate overlapping days between grid's 14-day window and irrigation windows
             def overlap_days(start_a, end_a, start_b, end_b):
                 overlap_start = max(start_a, start_b)
@@ -118,21 +125,20 @@ class IrrigationManager:
 
             # Function to check if a date is within any irrigation window
             def in_irrigation_window(d):
+                # Since irrig_windows is small, we can just check year
                 for wstart, wend in irrig_windows:
-                    if wstart <= d <= wend:
-                        return True
+                    if wstart.year == d.year:
+                        return wstart <= d <= wend
                 return False
 
             plan = []
-            for p in self._irr_periods:
-                # Skip periods outside the sim window
-                if p["window_end"] < sim_start_ or p["window_start"] > sim_end_:
-                    continue
-
+            for p in relevant_periods:
                 # Calculate overlap between the irrigation window and the grid's 14-day window
                 irrigation_window_overlap = 0
+                # Only check windows that might overlap with this period (same year)
                 for wstart, wend in irrig_windows:
-                    irrigation_window_overlap += overlap_days(p["window_start"], p["window_end"], wstart, wend)
+                    if wstart.year == p["window_start"].year or wend.year == p["window_end"].year:
+                        irrigation_window_overlap += overlap_days(p["window_start"], p["window_end"], wstart, wend)
 
                 irrigation_window_overlap = min(irrigation_window_overlap, self._period_days)
                 if irrigation_window_overlap <= 0:
