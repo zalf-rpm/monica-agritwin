@@ -25,6 +25,7 @@ import sqlite3
 import sys
 import time
 import zmq
+import copy
 
 import monica_io3
 import soil_io3
@@ -377,7 +378,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     soil_profile = soil_io3.soil_parameters(soil_db_con, soil_id)
                     soil_id_cache[soil_id] = soil_profile
 
-                worksteps = env_template["cropRotation"][0]["worksteps"]
+                env = copy.deepcopy(env_template)
+                worksteps = env["cropRotation"][0]["worksteps"]
                 sowing_ws = next(filter(lambda ws: ws["type"][-6:] == "Sowing", worksteps))
                 harvest_ws = next(filter(lambda ws: ws["type"][-7:] == "Harvest", worksteps))
 
@@ -533,11 +535,11 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 slr, slh = tcoords[slope_crs]
                 slope = slope_interpolate(slr, slh)
 
-                env_template["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = setup[
+                env["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = setup[
                     "LeafExtensionModifier"]
 
                 # print("soil:", soil_profile)
-                env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
+                env["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
 
                 # setting groundwater level
                 if setup["groundwater-level"]:
@@ -549,16 +551,15 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             # print("setting groundwaterlevel of soil_id:", str(soil_id), "to", groundwaterlevel, "m")
                             break
                         layer_depth += Mrunlib.get_value(layer["Thickness"])
-                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
+                    env["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
+                    env["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
                         max(0, groundwaterlevel - 0.2), "m"]
-                    env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
-                        groundwaterlevel + 0.2, "m"]
+                    env["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [groundwaterlevel + 0.2, "m"]
 
                 # setting impenetrable layer
                 if setup["impenetrable-layer"]:
                     impenetrable_layer_depth = Mrunlib.get_value(
-                        env_template["params"]["userEnvironmentParameters"]["LeachingDepth"])
+                        env["params"]["userEnvironmentParameters"]["LeachingDepth"])
                     layer_depth = 0
                     for layer in soil_profile:
                         if layer.get("is_impenetrable", False):
@@ -566,45 +567,37 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             # print("setting leaching depth of soil_id:", str(soil_id), "to", impenetrable_layer_depth, "m")
                             break
                         layer_depth += Mrunlib.get_value(layer["Thickness"])
-                    env_template["params"]["userEnvironmentParameters"]["LeachingDepth"] = [impenetrable_layer_depth,
-                                                                                            "m"]
-                    env_template["params"]["siteParameters"]["ImpenetrableLayerDepth"] = [impenetrable_layer_depth, "m"]
+                    env["params"]["userEnvironmentParameters"]["LeachingDepth"] = [impenetrable_layer_depth, "m"]
+                    env["params"]["siteParameters"]["ImpenetrableLayerDepth"] = [impenetrable_layer_depth, "m"]
 
                 if setup["elevation"]:
-                    env_template["params"]["siteParameters"]["heightNN"] = float(height_nn)
+                    env["params"]["siteParameters"]["heightNN"] = float(height_nn)
 
                 if setup["slope"]:
-                    env_template["params"]["siteParameters"]["slope"] = slope / 100.0
+                    env["params"]["siteParameters"]["slope"] = slope / 100.0
 
                 if setup["latitude"]:
                     clat, _ = cdict[(crow, ccol)]
-                    env_template["params"]["siteParameters"]["Latitude"] = clat
-
-                if setup["CO2"]:
-                    env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2"] = float(setup["CO2"])
-
-                if setup["O3"]:
-                    env_template["params"]["userEnvironmentParameters"]["AtmosphericO3"] = float(setup["O3"])
+                    env["params"]["siteParameters"]["Latitude"] = clat
 
                 if setup["FieldConditionModifier"]:
-                    env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"][
+                    env["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"][
                         "FieldConditionModifier"] = float(setup["FieldConditionModifier"])
 
                 if setup["StageTemperatureSum"]:
                     stage_ts = setup["StageTemperatureSum"].split('_')
                     stage_ts = [int(temp_sum) for temp_sum in stage_ts]
-                    orig_stage_ts = env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"][
+                    orig_stage_ts = env["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"][
                         "StageTemperatureSum"][0]
                     if len(stage_ts) != len(orig_stage_ts):
                         stage_ts = orig_stage_ts
                         print('The provided StageTemperatureSum array is not '
                               'sufficiently long. Falling back to original StageTemperatureSum')
 
-                    env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"][
+                    env["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"][
                         "StageTemperatureSum"][0] = stage_ts
 
-                env_template["params"]["simulationParameters"]["UseNMinMineralFertilisingMethod"] = setup[
-                    "fertilization"]
+                env["params"]["simulationParameters"]["UseNMinMineralFertilisingMethod"] = setup["fertilization"]
 
                 # If irrigation is enabled in the sim setup and the crop is defined as irrigated, build irrigation
                 # worksteps within the simulation period and irrigation period
@@ -617,21 +610,20 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         # Sort worksteps by date. If it doesn't have a date, put it to the end of the list ("9999-12-31")
                         worksteps.sort(key=lambda ws: ws.get("date", "9999-12-31"))
 
-                env_template["params"]["simulationParameters"]["NitrogenResponseOn"] = setup["NitrogenResponseOn"]
-                env_template["params"]["simulationParameters"]["WaterDeficitResponseOn"] = setup[
-                    "WaterDeficitResponseOn"]
-                env_template["params"]["simulationParameters"]["EmergenceMoistureControlOn"] = setup[
+                env["params"]["simulationParameters"]["NitrogenResponseOn"] = setup["NitrogenResponseOn"]
+                env["params"]["simulationParameters"]["WaterDeficitResponseOn"] = setup["WaterDeficitResponseOn"]
+                env["params"]["simulationParameters"]["EmergenceMoistureControlOn"] = setup[
                     "EmergenceMoistureControlOn"]
-                env_template["params"]["simulationParameters"]["EmergenceFloodingControlOn"] = setup[
+                env["params"]["simulationParameters"]["EmergenceFloodingControlOn"] = setup[
                     "EmergenceFloodingControlOn"]
 
-                env_template["csvViaHeaderOptions"] = sim_json["climate.csv-options"]
+                env["csvViaHeaderOptions"] = sim_json["climate.csv-options"]
 
                 subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario=scenario, ensmem=ensmem,
                                                                   version=version, crow=str(int(crow)), ccol=str(int(ccol)))
                 for _ in range(4):
                     subpath_to_csv = subpath_to_csv.replace("//", "/")
-                env_template["pathToClimateCSV"] = [
+                env["pathToClimateCSV"] = [
                     paths["monica-path-to-climate-dir"] + setup["climate_path_to_csvs"] + "/" + subpath_to_csv]
                 if setup["incl_hist"]:
 
@@ -642,7 +634,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                                                                                ccol=str(ccol))
                         for _ in range(4):
                             hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
-                        env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
+                        env["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
                             "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
 
                     elif rcm[:3] == "SMH":
@@ -652,7 +644,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                                                                                ccol=str(ccol))
                         for _ in range(4):
                             hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
-                        env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
+                        env["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
                             "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
 
                     hist_subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario="historical",
@@ -660,13 +652,13 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                                                                            crow=str(crow), ccol=str(ccol))
                     for _ in range(4):
                         hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
-                    env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
+                    env["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
                         "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
-                print("pathToClimateCSV:", env_template["pathToClimateCSV"])
+                print("pathToClimateCSV:", env["pathToClimateCSV"])
                 if DEBUG_WRITE_CLIMATE:
                     listOfClimateFiles.add(subpath_to_csv)
 
-                env_template["customId"] = {
+                env["customId"] = {
                     "setup_id": setup_id,
                     "srow": srow, "scol": scol,
                     "crow": int(crow), "ccol": int(ccol),
@@ -676,22 +668,22 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 }
 
                 # print("Harvest type:", setup["harvest-date"])
-                print("Srow: ", env_template["customId"]["srow"], "Scol:", env_template["customId"]["scol"])
+                print("Srow: ", env["customId"]["srow"], "Scol:", env["customId"]["scol"])
                 harvest_ws = next(
-                    filter(lambda ws: ws["type"][-7:] == "Harvest", env_template["cropRotation"][0]["worksteps"]))
+                    filter(lambda ws: ws["type"][-7:] == "Harvest", env["cropRotation"][0]["worksteps"]))
                 # if setup["harvest-date"] == "fixed":
                 #     print("Harvest-date:", harvest_ws["date"])
                 # elif setup["harvest-date"] == "auto":
                 #     print("Harvest-date:", harvest_ws["latest-date"])
 
                 if not DEBUG_DONOT_SEND:
-                    socket.send_json(env_template)
+                    socket.send_json(env)
 
-                    # Save the sent env_template as a json file for debugging
-                    # with open(f"out/env_template_{setup_id}_{sent_env_count}.json", "w") as f:
-                    #     json.dump(env_template, f, indent=4)
+                    # Save the sent env as a json file for debugging
+                    # with open(f"out/env_{setup_id}_{sent_env_count}.json", "w") as f:
+                    #     json.dump(env, f, indent=4)
 
-                    print("sent env ", sent_env_count, " customId: ", env_template["customId"])
+                    print("sent env ", sent_env_count, " customId: ", env["customId"])
 
                 sent_env_count += 1
 
@@ -707,7 +699,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
                         if not os.path.isfile(path_to_debug_file):
                             with open(path_to_debug_file, "w") as _:
-                                _.write(json.dumps(env_template))
+                                _.write(json.dumps(env))
                         else:
                             print("WARNING: Row ", (sent_env_count - 1), " already exists")
             # print("unknown_soil_ids:", unknown_soil_ids)
