@@ -196,8 +196,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     # initialize irrigation manager
     irrigation_manager = IrrigationManager("irrigated_crops.json")
 
-    # irr_folder_abs = os.path.join(paths["path-to-data-dir"], "germany/Brandenburg_iwu")
-    irr_folder_abs = os.path.join(paths["path-to-projects-dir"], "Brandenburg_iwu")
+    # irr_folder_abs = os.path.join(paths["path-to-data-dir"], "germany/LowerSaxony_iwu")
+    irr_folder_abs = os.path.join(paths["path-to-projects-dir"], "LowerSaxony_iwu")
     irrigation_manager.configure_grid_series(
         irr_folder_abs=irr_folder_abs,
         soil_crs=soil_crs,
