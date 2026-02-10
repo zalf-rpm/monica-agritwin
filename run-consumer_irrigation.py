@@ -80,19 +80,10 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         write_row_to_grids.nodata_row_count = defaultdict(lambda: 0)
         write_row_to_grids.list_of_output_files = defaultdict(list)
 
-    make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=np.float))
+    make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=float))
 
     output_grids = {
-        "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "Evapotranspiration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        # "Act_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
-        # "Pot_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}
-        # "TraDef_S2" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "TraDef_S3" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "TraDef_S4" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "TraDef_S5" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "TraDef_S6" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-        # "TraDef_S7" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2}
+        "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 2}
     }
     output_keys = list(output_grids.keys())
 
@@ -136,7 +127,15 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
                         for key, vals in key_to_vals.items():
                             output_vals = output_grids[key]["data"]
                             if len(vals) > 0:
-                                output_vals[(cm_count, year)][col] = sum(vals) / len(vals)
+                                # output_vals[(cm_count, year)][col] = sum(vals) / len(vals)
+
+                                val = sum(vals) / len(vals)
+
+                                if key == "Yield":
+                                    # Convert yield from kg/ha to dt/ha
+                                    val = round(val / 100.0, 2)
+
+                                output_vals[(cm_count, year)][col] = val
                             else:
                                 output_vals[(cm_count, year)][col] = -9999
 
@@ -329,7 +328,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                         + " cols@row to go: " + str(data["datacell-count"][row]) + "@" + str(
                 row) + " cells_per_row: " + str(datacells_per_row[row])  # \
             # + " rows unwritten: " + str(data["row-col-data"].keys())
-            print(debug_msg)
+            # print(debug_msg)
             # debug_file.write(debug_msg + "\n")
             if is_nodata:
                 data["row-col-data"][row][col] = -9999
@@ -430,11 +429,29 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
                         # for row in monica_io3.write_output(output_ids, results):
                         #     writer.writerow(row)
+
+                        # for result in results:
+                        #     row = []
+                        #     for output_id in output_ids:
+                        #         field_name = output_id["name"]
+                        #         row.append(result.get(field_name, ""))
+                        #     writer.writerow(row)
+
                         for result in results:
+                            if not result:
+                                continue
+
                             row = []
                             for output_id in output_ids:
                                 field_name = output_id["name"]
-                                row.append(result.get(field_name, ""))
+                                v = result.get(field_name, "")
+
+                                # Convert yield from kg/ha to dt/ha
+                                if field_name == "Yield" and v != "" and v is not None:
+                                    v = round(float(v) / 100.0, 2)
+
+                                row.append(v)
+
                             writer.writerow(row)
 
                 writer.writerow([])
