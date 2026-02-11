@@ -398,7 +398,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                             # _.write(f"Year,Yield,{sdata['param_name']},Region\n")
                             # _.write(f"Date,TraDef,{sdata['param_name']},Region\n")
                             # _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},Region\n")
-                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{param_name},AvgTraDef,Region,SoilType\n")
+                            _.write(f"Stage,Yield,AvgDaysBelowDST,TotalDaysBelowDST,{param_name},AvgTraDef,Region,SoilType\n")
 
                         for region, soiltypes in sdata["regions"].items():
                             for soiltype, rdata in soiltypes.items():
