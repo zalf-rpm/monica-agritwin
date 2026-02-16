@@ -62,3 +62,12 @@ This setup runs MONICA simulations with explicit irrigation events derived from 
   - Each grid represents a 14-day irrigation total ending on the date in the filename.
   - Irrigation events are distributed across dates within that 14-day window (e.g., every 3 days)
 - **`irrigated_crops.json`**: Defines which crops or cultivars are irrigated
+
+### NUTS3 Average Yield Simulation
+
+This setup runs MONICA simulations to calculate average yields per soil type and NUTS3 region in CSV format.
+
+- **`run-producer_nuts3_avg_yield.py`**: Producer script for NUTS3 average yield simulations
+- **`run-consumer_nuts3_avg_yield.py`**: Consumer script to aggregate NUTS3 average yield results into CSV format. The CSV file includes columns for the year, average yield in t/ha DM, NUTS3 region name, and soil type.
+- **`sim_setups_nuts3_notsensitivity.csv`**: CSV file defining simulation setups for NUTS3 average yield simulations with default parameter values
+- **`sim_sensitivity.json`**: Sim JSON used for this setup
