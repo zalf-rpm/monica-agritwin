@@ -61,9 +61,9 @@ PATHS = {
 DATA_SOIL_DB = "germany/buek200.sqlite"
 
 # Brandenburg
-DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 #DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_maize_18.asc"  # maize 2018 irrigation map
 #DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
@@ -75,9 +75,9 @@ DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 # DATA_GRID_SLOPE = "LSslope_100_25832_etrs89-utm32n.asc"
 
 # North Rhine-Westphalia
-#DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony
 #DATA_GRID_SOIL = "germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
@@ -93,6 +93,41 @@ DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_HEIGHT = "BAVdem_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "BAVslope_100_25832_etrs89-utm32n.asc"
+
+# Baden-Württemberg
+#DATA_GRID_SOIL = "germany/BWbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/BWdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/BWslope_100_25832_etrs89-utm32n.asc"
+
+# Mecklenburg-Western Pomerania
+#DATA_GRID_SOIL = "germany/MVbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/MVdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/MVslope_100_25832_etrs89-utm32n.asc"
+
+# Rheinhessen-Pfalz
+#DATA_GRID_SOIL = "germany/RPbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/RPdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/RPslope_100_25832_etrs89-utm32n.asc"
+
+# Saarland
+#DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/SAARdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
+
+# Saxony-Anhalt
+#DATA_GRID_SOIL = "germany/SAbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/SAdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/SAslope_100_25832_etrs89-utm32n.asc"
+
+# Schleswig-Holstein
+#DATA_GRID_SOIL = "germany/SHbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/SHdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/SHslope_100_25832_etrs89-utm32n.asc"
+
+# Thuringia
+#DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/THdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
 
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
