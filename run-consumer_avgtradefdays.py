@@ -41,13 +41,14 @@ PATHS = {
     "remoteConsumer-remoteMonica": {
         "path-to-data-dir": "./data/",
         "path-to-output-dir": "/out/out/",
+        "path-to-projects-dir": "/project/monica-agritwin/",
         "path-to-csv-output-dir": "/out/csv-out/"
     }
 }
 
 #TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"  # Germany 1000 m
 #TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/buek200_100_25832_etrs89-utm32n.asc"  # Brandenburg 100 m
-TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/LSbuek200_100_25832_etrs89-utm32n.asc"  # Lower Saxony 100 m
+TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/buek200_100_25832_etrs89-utm32n.asc"  # Lower Saxony 100 m
 # TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/NWbuek200_100_25832_etrs89-utm32n.asc"  # North Rhine-Westphalia 100 m
 # TEMPLATE_LANDUSE_PATH = "{local_path_to_data_dir}germany/landuse_1000_31469_gk5.asc"
 # DATA_SOIL_DB = "germany/buek200.sqlite"
