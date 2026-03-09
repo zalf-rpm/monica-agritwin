@@ -340,13 +340,13 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         # add crop id from setup file
         try:
             # read seed/harvest dates for each crop_id
-            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-projects-dir"],
+            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-data-dir"],
                                                         crop_id=crop_id_short)
             print("created seed harvest gk5 interpolator and read data: ", path_harvest)
             Mrunlib.create_seed_harvest_geoGrid_interpolator_and_read_data(path_harvest, wgs84_crs, utm32_crs,
                                                                            ilr_seed_harvest_data)
         except IOError:
-            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-projects-dir"],
+            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-data-dir"],
                                                         crop_id=crop_id_short)
             print("Couldn't read file:", path_harvest)
             continue
