@@ -236,7 +236,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
     leave = False
     write_normal_output_files = True
 
-    path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-project-dir"])
+    path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-projects-dir"])
     soil_epsg_code = int(path_to_soil_grid.split("/")[-1].split("_")[2])
     soil_crs = CRS.from_epsg(soil_epsg_code)
     soil_metadata, header = Mrunlib.read_header(path_to_soil_grid)
