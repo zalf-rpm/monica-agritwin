@@ -92,9 +92,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 # DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 
 # Germany 100 m
-DATA_GRID_SOIL = "germany/raster_backup/buek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/raster_backup/dem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/raster_backup/slope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 
 # Brandenburg 100 m
 #DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
@@ -105,8 +105,8 @@ DATA_GRID_SLOPE = "germany/raster_backup/slope_100_25832_etrs89-utm32n.asc"
 
 # Lower Saxony 100 m
 #DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "LSdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "LSslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
@@ -117,8 +117,8 @@ DATA_GRID_SLOPE = "germany/raster_backup/slope_100_25832_etrs89-utm32n.asc"
 
 # Bavaria
 #DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "BAVdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "BAVslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/BAVdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/BAVslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony
 #DATA_GRID_SOIL = "germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
@@ -182,7 +182,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     # select paths 
     paths = PATHS[config["mode"]]
     # open soil db connection
-    soil_db_con = sqlite3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB)
+    soil_db_con = sqlite3.connect(paths["path-to-projects-dir"] + DATA_SOIL_DB)
     # soil_db_con = cas_sq3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB) #CAS.
     # connect to monica proxy (if local, it will try to connect to a locally started monica)
     socket.connect("tcp://" + config["server"] + ":" + str(config["server-port"]))
@@ -317,7 +317,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_data=setup["crop_data"]
 
         DATA_GRID_CROPS = str("germany/raster/"+crop_data)
-        path_to_crop_grid = paths["path-to-data-dir"]+DATA_GRID_CROPS
+        path_to_crop_grid = paths["path-to-projects-dir"]+DATA_GRID_CROPS
         crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
         crop_crs = CRS.from_epsg(crop_epsg_code)
         if crop_crs not in soil_crs_to_x_transformers:
@@ -329,7 +329,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
         if region_name and len(region_name) > 0:
             # Create the soil mask for the specific region
-            path_to_soil_grid = paths["path-to-data-dir"] + DATA_GRID_SOIL
+            path_to_soil_grid = paths["path-to-projects-dir"] + DATA_GRID_SOIL
             mask = create_mask_from_shapefile(NUTS3_REGIONS, region_name, path_to_soil_grid)
 
             # Apply the soil mask to the soil grid
@@ -340,13 +340,13 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         # add crop id from setup file
         try:
             # read seed/harvest dates for each crop_id
-            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-data-dir"],
+            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-projects-dir"],
                                                         crop_id=crop_id_short)
             print("created seed harvest gk5 interpolator and read data: ", path_harvest)
             Mrunlib.create_seed_harvest_geoGrid_interpolator_and_read_data(path_harvest, wgs84_crs, utm32_crs,
                                                                            ilr_seed_harvest_data)
         except IOError:
-            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-data-dir"],
+            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-projects-dir"],
                                                         crop_id=crop_id_short)
             print("Couldn't read file:", path_harvest)
             continue
