@@ -39,7 +39,7 @@
 
 		
 		"events": [
-			"crop", [
+			"_crop", [
 				["CM-count", "FIRST"],
 				["Year", "LAST"],
 				["Crop", "FIRST"],
@@ -55,42 +55,48 @@
 				"Yield",
 				"TraDef"
 			],
-			{"while": ["Stage", "=", 2]},[
-				["CM-count", "LAST"],
-				["Year", "LAST"],
-				["Crop", "LAST"],
-				["TraDef|TraDef_S2", "AVG"]
-			],
-			{"while": ["Stage", "=", 3]},[
-				["CM-count", "LAST"],
-				["Year", "LAST"],
-				["Crop", "LAST"],
-				["TraDef|TraDef_S3", "AVG"]
-			],
-			{"while": ["Stage", "=", 4]},[
-				["CM-count", "LAST"],
-				["Year", "LAST"],
-				["Crop", "LAST"],
-				["TraDef|TraDef_S4", "AVG"]
-			],
-			{"while": ["Stage", "=", 5]},[
-				["CM-count", "LAST"],
-				["Year", "LAST"],
-				["Crop", "LAST"],
-				["TraDef|TraDef_S5", "AVG"]
-			],
-			{"while": ["Stage", "=", 6]},[
-				["CM-count", "LAST"],
-				["Year", "LAST"],
-				["Crop", "LAST"],
-				["TraDef|TraDef_S6", "AVG"]
-			],
-			{"while": ["Stage", "=", 7]},[
-				["CM-count", "LAST"],
-				["Year", "LAST"],
-				["Crop", "LAST"],
-				["TraDef|TraDef_S7", "AVG"]
-			]
+			{"start":  "Stage-1", "end":  "Stage-2"}, [
+              "Year",
+              "CM-count",
+              "Stage",
+              "Crop",
+              "TraDef"
+            ],
+            {"start":  "Stage-2", "end":  "Stage-3"}, [
+              "Year",
+              "CM-count",
+              "Stage",
+              "Crop",
+              "TraDef"
+            ],
+            {"start":  "Stage-3", "end":  "Stage-4"}, [
+              "Year",
+              "CM-count",
+              "Stage",
+              "Crop",
+              "TraDef"
+            ],
+            {"start":  "Stage-4", "end":  "Stage-5"}, [
+              "Year",
+              "CM-count",
+              "Stage",
+              "Crop",
+              "TraDef"
+            ],
+            {"start":  "Stage-5", "end":  "Stage-6"}, [
+              "Year",
+              "CM-count",
+              "Stage",
+              "Crop",
+              "TraDef"
+            ],
+            {"start":  "Stage-6", "end":  "Stage-0"}, [
+              "Year",
+              "CM-count",
+              "Stage",
+              "Crop",
+              "TraDef"
+            ]
 		]
 	},
 
