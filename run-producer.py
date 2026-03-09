@@ -80,9 +80,9 @@ PATHS = {
 DATA_SOIL_DB = "germany/buek200.sqlite"
 
 # Germany 1000 m
-DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/raster_backup/dem_1000_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/raster_backup/slope_1000_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/raster_backup/dem_1000_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/raster_backup/slope_1000_25832_etrs89-utm32n.asc"
 # DATA_GRID_CROPS = "germany/raster_backup/crop_sm_2018_1000_25832_etrs89-utm32n.asc"  # silage maize 2018 crop map
 #DATA_GRID_CROPS = "germany/raster_backup/crop_ww_2018_1000_25832_etrs89-utm32n.asc"  # winter wheat 2018 crop map
 # DATA_GRID_CROPS = "germany/raster_backup/crop_po_2018_1000_25832_etrs89-utm32n.asc"  # potato 2018 crop map
@@ -90,6 +90,11 @@ DATA_GRID_SLOPE = "germany/raster_backup/slope_1000_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_wc_18.asc"  # winter crops 2018 irrigation map
 # DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
 # DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
+
+# Germany 100 m
+DATA_GRID_SOIL = "germany/raster_backup/buek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/raster_backup/dem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/raster_backup/slope_100_25832_etrs89-utm32n.asc"
 
 # Brandenburg 100 m
 #DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
@@ -209,7 +214,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     ## note numpy is able to load from a compressed file, ending with .gz or .bz2
 
     # soil data
-    path_to_soil_grid = paths["path-to-data-dir"] + DATA_GRID_SOIL
+    path_to_soil_grid = paths["path-to-projects-dir"] + DATA_GRID_SOIL
     soil_epsg_code = int(path_to_soil_grid.split("/")[-1].split("_")[2])
     soil_crs = CRS.from_epsg(soil_epsg_code)
     if wgs84_crs not in soil_crs_to_x_transformers:
@@ -219,9 +224,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     print("read: ", path_to_soil_grid)
 
     # height data for germany
-    path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
-    if "LS" in DATA_GRID_HEIGHT or "BAV" in DATA_GRID_HEIGHT:
-        path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
+    path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
+    #if "LS" in DATA_GRID_HEIGHT or "BAV" in DATA_GRID_HEIGHT:
+    #    path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -232,9 +237,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     print("read: ", path_to_dem_grid)
 
     # slope data
-    path_to_slope_grid = paths["path-to-data-dir"] + DATA_GRID_SLOPE
-    if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
-        path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
+    path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
+    #if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
+    #    path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
