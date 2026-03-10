@@ -46,7 +46,7 @@
 				["Yield", "LAST"]
 				
 			],
-			"_daily", [
+			"daily", [
 				"Date",
 				"Crop",
 				"Stage",
@@ -54,49 +54,7 @@
 				"LAI",
 				"Yield",
 				"TraDef"
-			],
-			{"start":  "Stage-1", "end":  "Stage-2"}, [
-              "Year",
-              "CM-count",
-              "Stage",
-              "Crop",
-              "TraDef"
-            ],
-            {"start":  "Stage-2", "end":  "Stage-3"}, [
-              "Year",
-              "CM-count",
-              "Stage",
-              "Crop",
-              "TraDef"
-            ],
-            {"start":  "Stage-3", "end":  "Stage-4"}, [
-              "Year",
-              "CM-count",
-              "Stage",
-              "Crop",
-              "TraDef"
-            ],
-            {"start":  "Stage-4", "end":  "Stage-5"}, [
-              "Year",
-              "CM-count",
-              "Stage",
-              "Crop",
-              "TraDef"
-            ],
-            {"start":  "Stage-5", "end":  "Stage-6"}, [
-              "Year",
-              "CM-count",
-              "Stage",
-              "Crop",
-              "TraDef"
-            ],
-            {"start":  "Stage-6", "end":  "Stage-0"}, [
-              "Year",
-              "CM-count",
-              "Stage",
-              "Crop",
-              "TraDef"
-            ]
+			]
 		]
 	},
 
