@@ -40,10 +40,11 @@ PATHS = {
     "remoteConsumer-remoteMonica": {
         "path-to-data-dir": "./data/",
         "path-to-output-dir": "/out/out/",
+        "path-to-projects-dir": "/project/monica-agritwin/",
         "path-to-csv-output-dir": "/out/csv-out/"
     }
 }
-TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/BWbuek200_100_25832_etrs89-utm32n.asc"
+TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/buek200_100_25832_etrs89-utm32n.asc"
 TEMPLATE_LANDUSE_PATH = "{local_path_to_data_dir}germany/landuse_1000_31469_gk5.asc"
 USE_LANDUSE = False
 
@@ -224,9 +225,9 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
     socket.connect("tcp://" + config["server"] + ":" + config["port"])
     socket.RCVTIMEO = config["timeout"]
     leave = False
-    write_normal_output_files = False
+    write_normal_output_files = True
 
-    path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-data-dir"])
+    path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-projects-dir"])
     soil_epsg_code = int(path_to_soil_grid.split("/")[-1].split("_")[2])
     soil_crs = CRS.from_epsg(soil_epsg_code)
     soil_metadata, header = Mrunlib.read_header(path_to_soil_grid)
@@ -398,7 +399,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                             # _.write(f"Year,Yield,{sdata['param_name']},Region\n")
                             # _.write(f"Date,TraDef,{sdata['param_name']},Region\n")
                             # _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},Region\n")
-                            _.write(f"Stage,Yield,AvgDaysBelowDST,TotalDaysBelowDST,{param_name},AvgTraDef,Region,SoilType\n")
+                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{param_name},AvgTraDef,Region,SoilType\n")
 
                         for region, soiltypes in sdata["regions"].items():
                             for soiltype, rdata in soiltypes.items():
