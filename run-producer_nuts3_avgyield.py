@@ -178,7 +178,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "sim.json": "sim_sensitivity.json",
         "crop.json": "crop.json",
         "site.json": "site.json",
-        "setups-file": "sim_setups_nuts3_notsensitivity.csv",
+        "setups-file": "sim_setups_projections.csv",
         "run-setups": "[87]",
         "shared_id": shared_id
     }
@@ -195,7 +195,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     # select paths
     paths = PATHS[config["mode"]]
     # open soil db connection
-    soil_db_con = sqlite3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB)
+    soil_db_con = sqlite3.connect(paths["path-to-projects-dir"] + DATA_SOIL_DB)
     # soil_db_con = cas_sq3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB) #CAS.
     # connect to monica proxy (if local, it will try to connect to a locally started monica)
     socket.connect("tcp://" + config["server"] + ":" + str(config["server-port"]))
