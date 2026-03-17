@@ -65,7 +65,7 @@ This setup runs MONICA simulations with explicit irrigation events derived from 
 
 ### NUTS3 Average Yield Simulation
 
-This setup runs MONICA simulations to calculate average yields per soil type and NUTS3 region in CSV format. Two distinct CSV files and sim JSON 
+This setup runs MONICA simulations to calculate average yields per soil type and NUTS3 region in CSV format. Two distinct CSV files and sim JSON were made for (i) historical and (ii) future climate simulations.
 
 - **`run-producer_nuts3_avg_yield.py`**: Producer script for NUTS3 average yield simulations
 - **`run-consumer_nuts3_avg_yield.py`**: Consumer script to aggregate NUTS3 average yield results into CSV format. The CSV file includes columns for the year, average yield in t/ha DM, NUTS3 region name, and soil type.
