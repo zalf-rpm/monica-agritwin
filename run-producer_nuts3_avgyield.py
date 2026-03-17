@@ -175,11 +175,11 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "start-row": "0",
         "end-row": "-1",
         "path_to_dem_grid": "",
-        "sim.json": "sim_sensitivity.json",
+        "sim.json": "sim_projection.json",
         "crop.json": "crop.json",
         "site.json": "site.json",
         "setups-file": "sim_setups_projections.csv",
-        "run-setups": "[87]",
+        "run-setups": "[1]",
         "shared_id": shared_id
     }
 
