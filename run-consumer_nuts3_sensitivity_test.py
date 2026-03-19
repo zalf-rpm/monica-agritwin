@@ -328,7 +328,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
             if custom_id["is_sensitivity_analysis"]:
                 sdata = setup_id_to_sensitivity_data[setup_id]
 
-                print("received result custom_id:", custom_id)
+                # print("received result custom_id:", custom_id)
 
                 if "no_of_sent_envs" in custom_id:
                     sdata["no_of_envs_expected"] = custom_id["no_of_sent_envs"]
