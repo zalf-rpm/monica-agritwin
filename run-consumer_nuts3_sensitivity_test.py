@@ -228,6 +228,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
     write_normal_output_files = False
 
     path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-projects-dir"])
+    # path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-data-dir"])
     soil_epsg_code = int(path_to_soil_grid.split("/")[-1].split("_")[2])
     soil_crs = CRS.from_epsg(soil_epsg_code)
     soil_metadata, header = Mrunlib.read_header(path_to_soil_grid)
@@ -368,18 +369,20 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                 if tradef < threshold:
                                     rdata["stage_to_cell_below_days"][stage][cell] += 1
 
-                if sdata["no_of_envs_expected"] and sdata["no_of_envs_expected"] == sdata["envs_received"]:
+                expected = sdata["no_of_envs_expected"]
+                if expected is not None and sdata["envs_received"] >= expected:
                     path_to_out_dir = config["out"]
                     os.makedirs(path_to_out_dir, exist_ok=True)
 
                     path_to_out_file = f"{path_to_out_dir}/setup-{setup_id}_sensitivity.csv"
                     write_header = not os.path.isfile(path_to_out_file)
 
+                    param_name = sdata["param_name"] or "param"
+                    param_value = sdata["param_value"] if sdata["param_value"] not in [None, ""] else "NA"
+
                     with open(path_to_out_file, "a") as _:
                         if write_header:
-                            param_name = sdata["param_name"] or "param"
-                            param_value = sdata["param_value"] or "NA"
-                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{param_name},AvgTraDef,Region,SoilType\n")
+                            _.write(f"Stage;AvgDaysBelowDST;TotalDaysBelowDST;{param_name};AvgTraDef;Region;SoilType\n")
 
                         for region, soiltypes in sdata["regions"].items():
                             for soiltype, rdata in soiltypes.items():
@@ -406,7 +409,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                     else:
                                         avg_tradef = round(tradef_sum / tradef_count, 3)
 
-                                    _.write(f"{stage},{avg_days},{total_days},{param_value},{avg_tradef},{region},"
+                                    _.write(f"{stage};{avg_days};{total_days};{param_value};{avg_tradef};{region};"
                                             f"{soiltype}\n")
 
                     print("last expected env received")
@@ -417,6 +420,9 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     sdata["envs_received"] = 0
                     sdata["param_name"] = None
                     sdata["param_value"] = None
+
+                    if leave_after_finished_run:
+                        return True
 
             else:
                 is_nodata = custom_id["nodata"]
