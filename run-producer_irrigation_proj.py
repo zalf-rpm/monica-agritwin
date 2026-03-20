@@ -80,7 +80,7 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
 DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
-DATA_GRID_IRRIGATION = "germany/irrigation_SM_2030_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_IRRIGATION = "germany/irrigation_SM_2030_100_25832_etrs89-utm32n.asc"
 
 # Brandenburg 100 m
 #DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
@@ -256,15 +256,15 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     print("read: ", path_to_slope_grid)
 
     # irrigation data
-    path_to_irrigation_grid = paths["path-to-projects-dir"] + DATA_GRID_IRRIGATION
-    irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[4])
-    irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
-    if irrigation_crs not in soil_crs_to_x_transformers:
-        soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
-    irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
-    irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
-    irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata, False)
-    print("read: ", path_to_irrigation_grid)
+    # path_to_irrigation_grid = paths["path-to-projects-dir"] + DATA_GRID_IRRIGATION
+    # irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[4])
+    # irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
+    # if irrigation_crs not in soil_crs_to_x_transformers:
+    #     soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
+    # irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
+    # irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
+    # irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata, False)
+    # print("read: ", path_to_irrigation_grid)
 
     # initialize irrigation manager
     irrigation_manager = IrrigationManager("irrigated_crops.json")
@@ -318,6 +318,19 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                                                         crop_id=crop_id_short)
             print("Couldn't read file:", path_harvest)
             continue
+
+        # read irrigation map from setup
+        if setup.get("irrigation_data"):
+            DATA_GRID_IRRIGATION = str("germany/" + setup["irrigation_data"])
+            path_to_irrigation_grid = paths["path-to-projects-dir"] + DATA_GRID_IRRIGATION
+            irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[4])
+            irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
+            if irrigation_crs not in soil_crs_to_x_transformers:
+                soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
+            irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
+            irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
+            irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata, False)
+            print("read: ", path_to_irrigation_grid)
 
         cdict = {}
         # path to latlon-to-rowcol.json
@@ -594,10 +607,13 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 slr, slh = tcoords[slope_crs]
                 slope = slope_interpolate(slr, slh)
 
-                if irrigation_crs not in tcoords:
-                    tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
-                irr_r, irr_h = tcoords[irrigation_crs]
-                irrigation = int(irrigation_interpolate(irr_r, irr_h))
+                # Get irrigation value if irrigation map is provided in setup
+                irrigation = 0  # default to no irrigation
+                if setup.get("irrigation_data") and 'irrigation_interpolate' in locals():
+                    if irrigation_crs not in tcoords:
+                        tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
+                    irr_r, irr_h = tcoords[irrigation_crs]
+                    irrigation = int(irrigation_interpolate(irr_r, irr_h))
 
                 env["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = setup[
                     "LeafExtensionModifier"]
