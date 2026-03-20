@@ -238,8 +238,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # height data for germany
     path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
-    #if "LS" in DATA_GRID_HEIGHT or "BAV" in DATA_GRID_HEIGHT:
-    #    path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -251,8 +249,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # slope data
     path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
-    #if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
-    #    path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
@@ -288,8 +284,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_id_short = crop_id.split('_')[0]
         crop_data=setup["crop_data"]
 
-        DATA_GRID_CROPS = str("germany/raster/"+crop_data)
-        path_to_crop_grid = paths["path-to-projects-dir"]+DATA_GRID_CROPS
+        DATA_GRID_CROPS = str("germany/raster/" + crop_data)
+        path_to_crop_grid = paths["path-to-projects-dir"] + DATA_GRID_CROPS
         crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
         crop_crs = CRS.from_epsg(crop_epsg_code)
         if crop_crs not in soil_crs_to_x_transformers:
@@ -383,14 +379,52 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         # Check if sensitivity analysis is requested and deep copy crop parameters for modification
         is_sensitivity_analysis = False
         orig_params = None
+        p_name = None
+        p_value = None
         if setup["species_param_name"]:
             if not orig_params:
                 orig_params = copy.deepcopy(
                     env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"])
+                is_sensitivity_analysis = True
         elif setup["cultivar_param_name"]:
             if not orig_params:
                 orig_params = copy.deepcopy(
                     env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"])
+                is_sensitivity_analysis = True
+
+        # Apply sensitivity parameters once per setup
+        if is_sensitivity_analysis:
+            params = env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]
+            if setup["species_param_name"]:
+                params_ref = params["species"]
+            else:
+                params_ref = params["cultivar"]
+
+            p_name = setup["species_param_name"] or setup["cultivar_param_name"]
+            if setup["coeff"] and p_name and orig_params:
+                coefficient = float(setup["coeff"])
+                if type(orig_params[p_name]) is list and len(orig_params[p_name]) > 0:
+                    if type(orig_params[p_name][0]) is list:
+                        params_ref[p_name][0] = list([float(val) * coefficient for val in orig_params[p_name][0]])
+                    else:
+                        params_ref[p_name] = list([float(val) * coefficient for val in orig_params[p_name]])
+            elif setup["param_value"]:
+                p_value = float(setup["param_value"])
+                p_name = setup["species_param_name"] or setup["cultivar_param_name"]
+                if p_name and orig_params:
+                    if setup["param_index_in_array"]:
+                        i = int(setup["param_index_in_array"])
+                        if type(params_ref[p_name][0]) is list:
+                            params_ref[p_name][0][i] = p_value
+                        else:
+                            params_ref[p_name][i] = p_value
+                    else:
+                        params_ref[p_name] = p_value
+
+        # Cache worksteps lookups at setup level
+        worksteps = env_template["cropRotation"][0]["worksteps"]
+        sowing_ws = next(filter(lambda ws: ws["type"][-6:] == "Sowing", worksteps))
+        harvest_ws = next(filter(lambda ws: ws["type"][-7:] == "Harvest", worksteps))
 
         for srow in range(0, srows):
             print(srow, end=", ")
@@ -403,6 +437,25 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             for scol in range(0, scols):
                 soil_id = int(soil_grid[srow, scol])
                 if soil_id == nodata_value:
+                    continue
+
+                crop_grid_id = int(crop_grid[srow, scol])
+                if crop_grid_id != 1 or soil_id == -8888:
+                    if is_sensitivity_analysis:
+                        continue
+
+                    env_template["customId"] = {
+                        "setup_id": setup_id,
+                        "srow": srow, "scol": scol,
+                        "soil_id": soil_id,
+                        "env_id": sent_env_count,
+                        "nodata": True,
+                        "is_sensitivity_analysis": is_sensitivity_analysis,
+                    }
+                    if not DEBUG_DONOT_SEND:
+                        socket.send_json(env_template)
+                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
+                        sent_env_count += 1
                     continue
 
                 # get coordinate of closest climate element of real soil-cell
@@ -418,57 +471,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 # Get the soil type for the current grid cell
                 soiltype_id = int(soiltype_raster[srow, scol])
                 soiltype_name = soiltype_lookup[soiltype_id] if soiltype_id != nodata_value else None
-
-                # Apply sensitivity analysis to crop parameters based on setup:
-                # Multiply parameter list by coefficient if specified
-                # Set parameter to a single value or update a specific index if specified
-                p_value = p_name = params = None
-                if setup["species_param_name"]:
-                    params = env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"]
-                    p_name = setup["species_param_name"]
-                elif setup["cultivar_param_name"]:
-                    params = env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"]
-                    p_name = setup["cultivar_param_name"]
-                if setup["coeff"] and p_name and params and orig_params:
-                    # Case 3: List with a coefficient
-                    coefficient = float(setup["coeff"])
-                    is_sensitivity_analysis = True
-                    if type(orig_params[p_name]) is list and len(orig_params[p_name]) > 0:
-                        if type(orig_params[p_name][0]) is list:
-                            params[p_name][0] = list([float(val) * coefficient for val in orig_params[p_name][0]])
-                        else:
-                            params[p_name] = list([float(val) * coefficient for val in orig_params[p_name]])
-                elif setup["param_value"]:
-                    # Case 1: Single value or Case 2: List without coefficient
-                    p_value = float(setup["param_value"])
-                    is_sensitivity_analysis = True
-                    if params and p_name:
-                        if setup["param_index_in_array"]:
-                            i = int(setup["param_index_in_array"])
-                            if type(params[p_name][0]) is list:
-                                params[p_name][0][i] = p_value
-                            else:
-                                params[p_name][i] = p_value
-                        else:
-                            params[p_name] = p_value
-
-                crop_grid_id = int(crop_grid[srow, scol])
-                # print(crop_grid_id)
-                if crop_grid_id != 1 or soil_id == -8888:
-                    # print("row/col:", srow, "/", scol, "is not a crop pixel.")
-                    env_template["customId"] = {
-                        "setup_id": setup_id,
-                        "srow": srow, "scol": scol,
-                        "soil_id": soil_id,
-                        "env_id": sent_env_count,
-                        "nodata": True,
-                        "is_sensitivity_analysis": is_sensitivity_analysis,
-                    }
-                    if not DEBUG_DONOT_SEND:
-                        socket.send_json(env_template)
-                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
-                        sent_env_count += 1
-                    continue
 
                 tcoords = {}
 
@@ -489,10 +491,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 else:
                     soil_profile = soil_io3.soil_parameters(soil_db_con, soil_id)
                     soil_id_cache[soil_id] = soil_profile
-
-                worksteps = env_template["cropRotation"][0]["worksteps"]
-                sowing_ws = next(filter(lambda ws: ws["type"][-6:] == "Sowing", worksteps))
-                harvest_ws = next(filter(lambda ws: ws["type"][-7:] == "Harvest", worksteps))
 
                 ilr_interpolate = ilr_seed_harvest_data[crop_id_short]["interpolate"]
                 seed_harvest_cs = ilr_interpolate(sr, sh) if ilr_interpolate else None
@@ -784,8 +782,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
                 # print("Harvest type:", setup["harvest-date"])
                 # print("Srow: ", env_template["customId"]["srow"], "Scol:", env_template["customId"]["scol"])
-                harvest_ws = next(
-                    filter(lambda ws: ws["type"][-7:] == "Harvest", env_template["cropRotation"][0]["worksteps"]))
+                # harvest_ws = next(
+                #     filter(lambda ws: ws["type"][-7:] == "Harvest", env_template["cropRotation"][0]["worksteps"]))
                 # if setup["harvest-date"] == "fixed":
                 #     print("Harvest-date:", harvest_ws["date"])
                 # elif setup["harvest-date"] == "auto":

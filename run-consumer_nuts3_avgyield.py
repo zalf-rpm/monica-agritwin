@@ -354,7 +354,8 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                 if y is not None and y != "" and y != -9999:
                                     rdata["year_to_yields"][year].append(float(y))
 
-                if sdata["no_of_envs_expected"] and sdata["no_of_envs_expected"] == sdata["envs_received"]:
+                expected = sdata["no_of_envs_expected"]
+                if expected is not None and sdata["envs_received"] >= expected:
                     path_to_out_dir = config["out"]
                     os.makedirs(path_to_out_dir, exist_ok=True)
 
@@ -363,7 +364,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
                     with open(path_to_out_file, "a") as _:
                         if write_header:
-                            _.write("Year,AvgYield,Region,SoilType\n")
+                            _.write("Year;AvgYield;Region;SoilType\n")
 
                         for region, soiltypes in sdata["regions"].items():
                             for soiltype, rdata in soiltypes.items():
@@ -371,7 +372,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                     yields = rdata["year_to_yields"][year]
                                     avg_yield = round(sum(yields) / len(yields), 2) if yields else -9999
                                     avg_yield_t = round(avg_yield / 1000, 1)  # Convert from kg/ha to t/ha
-                                    _.write(f"{year},{avg_yield_t},{region},{soiltype}\n")
+                                    _.write(f"{year};{avg_yield_t};{region};{soiltype}\n")
 
                     print("last expected env received")
 
@@ -379,6 +380,11 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     sdata["regions"].clear()
                     sdata["no_of_envs_expected"] = None
                     sdata["envs_received"] = 0
+                    sdata["param_name"] = None
+                    sdata["param_value"] = None
+
+                    if leave_after_finished_run:
+                        return True
 
             else:
                 is_nodata = custom_id["nodata"]
