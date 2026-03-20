@@ -15,7 +15,7 @@
 # Landscape Systems Analysis at the ZALF.
 # Copyright (C: Leibniz Centre for Agricultural Landscape Research (ZALF)
 
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 import csv
 import numpy as np
 import os
@@ -78,7 +78,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         write_row_to_grids.nodata_row_count = defaultdict(lambda: 0)
         write_row_to_grids.list_of_output_files = defaultdict(list)
 
-    make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=np.float))
+    make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=float))
 
     output_grids = {
         "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
@@ -296,8 +296,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
         "regions": defaultdict(
             lambda: defaultdict(
                 lambda: {
-                    "year_to_yields": defaultdict(list),
-                    "cells": set()
+                    "year_to_yield": defaultdict(lambda: {"sum": 0.0, "count": 0})
                 }
             )
         )
@@ -328,22 +327,20 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                 else:
                     sdata["envs_received"] += 1
 
-                    if "param_name" in custom_id:
-                        sdata["param_name"] = custom_id["param_name"]
+                    param_name = custom_id.get("param_name")
+                    if param_name is not None:
+                        sdata["param_name"] = param_name
 
-                    if "param_value" in custom_id:
-                        sdata["param_value"] = custom_id["param_value"]
+                    param_value = custom_id.get("param_value")
+                    if param_value is not None:
+                        sdata["param_value"] = param_value
 
                     # Get region name and soil type
-                    region = custom_id.get("nuts3", "UnknownRegion")
-                    soiltype = custom_id.get("soiltype", "UnknownSoil")
+                    region = custom_id.get("nuts3") or "UnknownRegion"
+                    soiltype = custom_id.get("soiltype") or "UnknownSoil"
 
                     rdata = sdata["regions"][region][soiltype]
-
-                    row = custom_id.get("srow")
-                    col = custom_id.get("scol")
-                    if row is not None and col is not None:
-                        rdata["cells"].add((row, col))
+                    year_to_stats = rdata["year_to_stats"]
 
                     for data in msg.get("data", []):
                         results = data.get("results", [])
@@ -352,7 +349,9 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                 year = int(vals["Year"])
                                 y = vals["Yield"]
                                 if y is not None and y != "" and y != -9999:
-                                    rdata["year_to_yields"][year].append(float(y))
+                                    stats = year_to_stats[year]
+                                    stats["sum"] += float(y)
+                                    stats["count"] += 1
 
                 expected = sdata["no_of_envs_expected"]
                 if expected is not None and sdata["envs_received"] >= expected:
@@ -368,9 +367,9 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
                         for region, soiltypes in sdata["regions"].items():
                             for soiltype, rdata in soiltypes.items():
-                                for year in sorted(rdata["year_to_yields"].keys()):
-                                    yields = rdata["year_to_yields"][year]
-                                    avg_yield = round(sum(yields) / len(yields), 2) if yields else -9999
+                                for year in sorted(rdata["year_to_yield"].keys()):
+                                    stats = rdata["year_to_yield"][year]
+                                    avg_yield = round(stats["sum"] / stats["count"], 2) if stats["count"] else -9999
                                     avg_yield_t = round(avg_yield / 1000, 1)  # Convert from kg/ha to t/ha
                                     _.write(f"{year};{avg_yield_t};{region};{soiltype}\n")
 
