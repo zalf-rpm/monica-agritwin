@@ -340,7 +340,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     soiltype = custom_id.get("soiltype") or "UnknownSoil"
 
                     rdata = sdata["regions"][region][soiltype]
-                    year_to_stats = rdata["year_to_stats"]
+                    year_to_yield = rdata["year_to_yield"]
 
                     for data in msg.get("data", []):
                         results = data.get("results", [])
@@ -349,7 +349,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                 year = int(vals["Year"])
                                 y = vals["Yield"]
                                 if y is not None and y != "" and y != -9999:
-                                    stats = year_to_stats[year]
+                                    stats = year_to_yield[year]
                                     stats["sum"] += float(y)
                                     stats["count"] += 1
 
