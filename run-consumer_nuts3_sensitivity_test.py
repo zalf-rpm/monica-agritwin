@@ -421,8 +421,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     sdata["param_name"] = None
                     sdata["param_value"] = None
 
-                    if leave_after_finished_run:
-                        return True
+                    process_message.setup_count += 1
 
             else:
                 is_nodata = custom_id["nodata"]
