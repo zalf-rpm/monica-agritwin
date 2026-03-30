@@ -17,6 +17,8 @@ This repository contains MONICA simulation setups for the EOAgriTwin project.
 - **`run-consumer_nuts3.py`**: Consumer script to aggregate NUTS3-level results
 - **`sim_setups_nuts3.csv`**: CSV file defining simulation setups for NUTS3-level simulations
 - **`sim.json`**: Sim JSON used for this setup
+- **`run-producer_nuts3_hist.py`**: Updated Producer script for NUTS3-level with soiltype simulations
+- **`run-consumer_nuts3_hist.py`**: Updated Consumer script to aggregate NUTS3-level results by soiltype
 
 ### NUTS3 Sensitivity Analysis
 
