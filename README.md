@@ -46,7 +46,7 @@ This repository contains MONICA simulation setups for the EOAgriTwin project.
 - **`sim_avgtradefdays.json`**: Sim JSON used for this setup for winter wheat
 - **`sim_avgtradefdays_sm.json`**: Sim JSON used for this setup for silage maize
 
-### Irrigation Simulation
+### Irrigation Simulation [DT Hydrology]
 
 This setup runs MONICA simulations with explicit irrigation events derived from irrigation grids. Irrigation is applied as worksteps that are appended to the crop rotation worksteps.
 
