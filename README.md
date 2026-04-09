@@ -6,10 +6,19 @@ This repository contains MONICA simulation setups for the EOAgriTwin project.
 
 ### Climate Projection Simulation
 
+#### TraDef < DST
+
 - **`run-producer.py`**: Producer script for climate projection simulations
 - **`run-consumer.py`**: Consumer script to aggregate results into ASCII grid files
 - **`sim_setups_projection.csv`**: CSV file defining simulation setups for climate projections
 - **`sim_projection.json`**: Sim JSON used for this setup
+
+#### NUTS3 Avg Yield 
+
+Note: consumer and producer python scripts from the historical setups (**`run-consumer_nuts3_avg_yield.py`** and **`run-producer_nuts3_avg_yield.py`**) were used by changing the climate from historical to climate projections
+
+- **`sim_projection_avgyield.json`**: Sim JSON used for this setup (climate projection)
+- **`sim_setups_projection_avgyield.csv`**: CSV file defining simulation setups for NUTS3 average yield simulations with default parameter values (climate projection)
 
 ### NUTS3-Level Simulation
 
@@ -67,11 +76,9 @@ This setup runs MONICA simulations with explicit irrigation events derived from 
 
 ### NUTS3 Average Yield Simulation
 
-This setup runs MONICA simulations to calculate average yields per soil type and NUTS3 region in CSV format. Two distinct CSV files and sim JSON were made for (i) historical and (ii) future climate simulations.
+This setup runs historical MONICA simulations to calculate average yields per soil type and NUTS3 region in CSV format. 
 
 - **`run-producer_nuts3_avg_yield.py`**: Producer script for NUTS3 average yield simulations
 - **`run-consumer_nuts3_avg_yield.py`**: Consumer script to aggregate NUTS3 average yield results into CSV format. The CSV file includes columns for the year, average yield in t/ha DM, NUTS3 region name, and soil type.
-- **`sim_setups_nuts3_notsensitivity.csv`**: CSV file defining simulation setups for NUTS3 average yield simulations with default parameter values (historical)
-- **`sim_setups_projection_avgyield.csv`**: CSV file defining simulation setups for NUTS3 average yield simulations with default parameter values (climate projection)
-- **`sim_sensitivity.json`**: Sim JSON used for this setup (historical)
-- **`sim_projection_avgyield.json`**: Sim JSON used for this setup (climate projection)
+- **`sim_setups_nuts3_notsensitivity.csv`**: CSV file defining simulation setups for NUTS3 average yield simulations with default parameter values 
+- **`sim_sensitivity.json`**: Sim JSON used for this setup
