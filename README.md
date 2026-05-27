@@ -31,14 +31,16 @@ Note: consumer and producer python scripts from the historical setups (**`run-co
 
 ### NUTS3 Sensitivity Analysis
 
-- **`run-producer_nuts3_sensitivity.py`**: Producer script for sensitivity analysis at NUTS3 level for Bavaria
-- **`run-producer_nuts3_sensitivity2.py`**: Producer script for sensitivity analysis at NUTS3 level for Hessen
+- **`run-producer_nuts3_sensitivity.py`**: Producer script for sensitivity analysis at NUTS3 level with soiltype 
+- **`run-producer_nuts3_sensitivity2.py`**: Producer script for sensitivity analysis at NUTS3 level with soiltype (extra for parallel runs)
+- **`run-producer_nuts3_sensitivity2_old.py`**: Producer script for sensitivity analysis at NUTS3 level without soiltype
 - **`run-producer_nuts3_sensitivity3.py`**: Producer script for sensitivity analysis at NUTS3 level for Lower Saxony
 - **`run-consumer_nuts3_sensitivity.py`**: Consumer script for sensitivity analysis results in CSV format. The CSV file includes columns for the stage, average number of days below the transpiration deficit threshold during that stage, total number of days in the stage, parameter values, average transpiration deficit for the stage, NUTS3 region name, and soil type.
-- **`run-consumer_nuts3_sensitivity2.py`**: Consumer script for sensitivity analysis results in CSV format. The CSV file includes columns for the stage, average number of days below the transpiration deficit threshold during that stage, total number of days below the transpiration deficit threshold during that stage, parameter values, region name.
+- **`run-consumer_nuts3_sensitivity2.py`**: Consumer script for sensitivity analysis results in CSV format. The CSV file includes columns for the stage, average number of days below the transpiration deficit threshold during that stage, total number of days below the transpiration deficit threshold during that stage, parameter values, region name and soil type.
+- **`run-consumer_nuts3_sensitivity2.py`**: Consumer script for sensitivity analysis results in CSV format. The CSV file includes columns for the stage, average number of days below the transpiration deficit threshold during that stage, total number of days below the transpiration deficit threshold during that stage, parameter values, region name only.
 - **`run-consumer_nuts3_sensitivity3.py`**: Consumer script for sensitivity analysis results in CSV format. The CSV file includes columns for the stage, average number of days below the transpiration deficit threshold during that stage, total number of days in the stage, parameter values, average transpiration deficit for the stage, NUTS3 region name, and soil type.
 - **`sim_setups_nuts3_notsensitivity.csv`**: CSV file defining simulation setups for sensitivity analysis with default parameter values
-- **`sim_setups_nuts3_sensitivity.csv`**: CSV file defining simulation setups for sensitivity analysis with varied parameter values for North Rhine-Westphalia
+- **`sim_setups_nuts3_sensitivity.csv`**: CSV file defining simulation setups for sensitivity analysis with varied parameter values for North Rhine-Westphalia, BW, MV, RP, SA, SAAR, SH, TH
 - **`sim_setups_nuts3_sensitivity2.csv`**: CSV file defining simulation setups for sensitivity analysis with varied parameter values for Saxony, Hessen, and Bavaria
 - **`sim_setups_nuts3_sensitivity_BB.csv`**: CSV file defining simulation setups for sensitivity analysis with varied parameter values for Brandenburg
 - **`sim_setups_nuts3_sensitivity_LS.csv`**: CSV file defining simulation setups for sensitivity analysis with varied parameter values for Lower Saxony
