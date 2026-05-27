@@ -183,7 +183,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     # select paths 
     paths = PATHS[config["mode"]]
     # open soil db connection
-    soil_db_con = sqlite3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB)
+    soil_db_con = sqlite3.connect(paths["path-to-projects-dir"] + DATA_SOIL_DB)
     # soil_db_con = cas_sq3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB) #CAS.
     # connect to monica proxy (if local, it will try to connect to a locally started monica)
     socket.connect("tcp://" + config["server"] + ":" + str(config["server-port"]))
@@ -215,7 +215,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     ## note numpy is able to load from a compressed file, ending with .gz or .bz2
 
     # soil data
-    path_to_soil_grid = paths["path-to-data-dir"] + DATA_GRID_SOIL
+    path_to_soil_grid = paths["path-to-projects-dir"] + DATA_GRID_SOIL
     soil_epsg_code = int(path_to_soil_grid.split("/")[-1].split("_")[2])
     soil_crs = CRS.from_epsg(soil_epsg_code)
     if wgs84_crs not in soil_crs_to_x_transformers:
@@ -225,9 +225,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     print("read: ", path_to_soil_grid)
 
     # height data for germany
-    path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
-    if "LS" in DATA_GRID_HEIGHT or "BAV" in DATA_GRID_HEIGHT:
-        path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
+    path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
+    #if "LS" in DATA_GRID_HEIGHT or "BAV" in DATA_GRID_HEIGHT:
+    #    path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -238,9 +238,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     print("read: ", path_to_dem_grid)
 
     # slope data
-    path_to_slope_grid = paths["path-to-data-dir"] + DATA_GRID_SLOPE
-    if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
-        path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
+    path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
+    #if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
+    #    path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
@@ -277,7 +277,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_data=setup["crop_data"]
 
         DATA_GRID_CROPS = str("germany/raster/"+crop_data)
-        path_to_crop_grid = paths["path-to-data-dir"]+DATA_GRID_CROPS  
+        path_to_crop_grid = paths["path-to-projects-dir"]+DATA_GRID_CROPS  
         crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
         crop_crs = CRS.from_epsg(crop_epsg_code)
         if crop_crs not in soil_crs_to_x_transformers:
