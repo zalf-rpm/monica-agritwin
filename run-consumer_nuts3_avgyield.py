@@ -345,12 +345,18 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     for data in msg.get("data", []):
                         results = data.get("results", [])
                         for vals in results:
-                            if "Year" in vals and "Yield" in vals:
-                                year = int(vals["Year"])
-                                y = vals["Yield"]
-                                if y is not None and y != "" and y != -9999:
+                            if "Year" in vals and "Yield" in vals and "CM-count" in vals:
+                                try:
+                                    if int(vals["CM-count"]) != 1:
+                                        continue
+                                    year = int(vals["Year"])
+                                    y = float(vals["Yield"])
+                                except (TypeError, ValueError):
+                                    continue
+
+                                if y != -9999:
                                     stats = year_to_yield[year]
-                                    stats["sum"] += float(y)
+                                    stats["sum"] += y
                                     stats["count"] += 1
 
                 expected = sdata["no_of_envs_expected"]
