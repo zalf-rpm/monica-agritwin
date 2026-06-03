@@ -44,7 +44,7 @@ PATHS = {
         "path-to-csv-output-dir": "/out/csv-out/"
     }
 }
-TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
+TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/THbuek200_100_25832_etrs89-utm32n.asc"
 TEMPLATE_LANDUSE_PATH = "{local_path_to_data_dir}germany/landuse_1000_31469_gk5.asc"
 USE_LANDUSE = False
 
