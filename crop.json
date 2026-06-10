@@ -5,7 +5,7 @@
 			"is-winter-crop": true,
 			"cropParams": {
 				"species": ["include-from-file", "crops/species/wheat.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/winter-wheat_bs_dwd_pheno_Schleswig.json"]
+				"cultivar": ["include-from-file", "crops/cultivars/winter-wheat_modoklim_pheno.json"]
 			},
 			"residueParams": ["include-from-file", "crops/residues/wheat.json"]
 		},
@@ -45,7 +45,7 @@
 			"is-winter-crop": true,
 			"cropParams": {
 				"species": ["include-from-file", "crops/species/maize.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/silage-maize_bs_dwd_pheno_jb.json"]
+				"cultivar": ["include-from-file", "crops/cultivars/silage-maize_modoklim_pheno.json"]
 			},
 			"residueParams": ["include-from-file", "crops/residues/maize.json"]
 		},
