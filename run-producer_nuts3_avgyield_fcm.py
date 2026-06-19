@@ -200,8 +200,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     crop_param_tables = {}
 
     for fname in os.listdir("."):
-        if fname.endswith("_params_nuts3.csv"):
-            crop_code = fname.split("_params_nuts3.csv")[0]
+        if fname.endswith("_param_nuts3.csv"):
+            crop_code = fname.split("_param_nuts3.csv")[0]
 
             df = pd.read_csv(fname, sep=";")
             df["NUTS_id"] = df["NUTS_id"].astype(str).str.strip()
