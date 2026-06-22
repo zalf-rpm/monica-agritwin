@@ -5,7 +5,7 @@
 			"is-winter-crop": true,
 			"cropParams": {
 				"species": ["include-from-file", "crops/species/wheat.json"],
-				"cultivar": ["include-from-file", "crops/cultivars/winter-wheat_modoklim_pheno.json"]
+				"cultivar": ["include-from-file", "crops/cultivars/winter-wheat_bs_dwd_pheno_Schleswig.json"]
 			},
 			"residueParams": ["include-from-file", "crops/residues/wheat.json"]
 		},
