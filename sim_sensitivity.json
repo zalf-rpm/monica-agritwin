@@ -39,7 +39,7 @@
 
 		
 		"events": [
-			"crop", [
+			"_crop", [
 				["CM-count", "FIRST"],
 				["Year", "LAST"],
 				["Crop", "FIRST"],
@@ -58,7 +58,7 @@
 				["Tavg", "AVG"],
 				["Globrad", "AVG"]
 			],
-			"_daily", [
+			"daily", [
 				"Date",
 				"Crop",
 				"Stage",
