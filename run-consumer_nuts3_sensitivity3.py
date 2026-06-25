@@ -15,7 +15,7 @@
 # Landscape Systems Analysis at the ZALF.
 # Copyright (C: Leibniz Centre for Agricultural Landscape Research (ZALF)
 
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 import csv
 import numpy as np
 import os
@@ -77,7 +77,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         write_row_to_grids.nodata_row_count = defaultdict(lambda: 0)
         write_row_to_grids.list_of_output_files = defaultdict(list)
 
-    make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=np.float))
+    make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=float))
 
     output_grids = {
         "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
@@ -298,12 +298,13 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
         "regions": defaultdict(
             lambda: defaultdict(
                 lambda: {
-                    "date_to_tradef": defaultdict(list),
-                    "stage_to_days_below_dst": defaultdict(list),
-                    "cells": set(),
-                    "stage_to_cell_below_days": defaultdict(lambda: defaultdict(int)),
-                    "stage_to_cell_total_days": defaultdict(lambda: defaultdict(int)),
-                    "stage_to_cell_tradef": defaultdict(lambda: defaultdict(list))
+                    "stage_stats": defaultdict(lambda: {
+                        "below_days": 0,
+                        "total_days": 0,
+                        "tradef_sum": 0.0,
+                        "tradef_count": 0,
+                        "cells": set()
+                    })
                 }
             )
         )
@@ -348,40 +349,30 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
                     row = custom_id.get("srow")
                     col = custom_id.get("scol")
-                    if row is not None and col is not None:
-                        rdata["cells"].add((row, col))
 
                     for data in msg.get("data", []):
                         results = data.get("results", [])
                         for vals in results:
-                            # if "Year" in vals:
-                            #     year = int(vals["Year"])
-                            #     if "Yield" in vals:
-                            #         rdata["year_to_yields"][year].append(vals["Yield"])
-
-                            # if "Date" in vals:
-                            #     date = vals["Date"]
-                            #     if "TraDef" in vals:
-                            #         rdata["date_to_tradef"][date].append(vals["TraDef"])
-
-                            if "Date" in vals and "TraDef" in vals:
-                                date = vals["Date"]
-                                tradef = float(vals["TraDef"])
-                                rdata["date_to_tradef"][date].append(tradef)
-
-                                # Count days below DroughtStressThreshold per stage
-                                if "Stage" in vals:
+                            if "Date" in vals and "TraDef" in vals and "Stage" in vals:
+                                try:
                                     stage = int(vals["Stage"])
-                                    rdata["stage_to_cell_tradef"][stage][(row, col)].append(tradef)
-                                    threshold = float(sdata["param_value"]) if (sdata["param_value"]
-                                                                                not in [None,"NA"]) else 0.0
-                                    is_below = tradef < threshold
-                                    rdata["stage_to_days_below_dst"][stage].append(1 if is_below else 0)
+                                    tradef = float(vals["TraDef"])
+                                except (TypeError, ValueError):
+                                    continue
 
-                                    cell = (row, col)
-                                    rdata["stage_to_cell_total_days"][stage][cell] += 1
-                                    if is_below:
-                                        rdata["stage_to_cell_below_days"][stage][cell] += 1
+                                threshold = float(sdata["param_value"]) if (sdata["param_value"]) not in [None,"NA"] \
+                                    else 0.0
+
+                                cell = (row, col)
+                                stats = rdata["stage_stats"][stage]
+
+                                stats["cells"].add(cell)
+                                stats["total_days"] += 1
+                                stats["tradef_sum"] += tradef
+                                stats["tradef_count"] += 1
+
+                                if tradef < threshold:
+                                    stats["below_days"] += 1
 
                 if sdata["no_of_envs_expected"] and sdata["no_of_envs_expected"] == sdata["envs_received"]:
                     path_to_out_dir = config["out"]
@@ -391,57 +382,32 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     #path_to_out_file = f"{path_to_out_dir}/setup-{setup_id}_drought.csv"
                     write_header = not os.path.isfile(path_to_out_file)
 
+                    param_name = sdata["param_name"] or "param"
+                    param_value = sdata["param_value"] or "NA"
+
                     with open(path_to_out_file, "a") as _:
                         if write_header:
-                            param_name = sdata["param_name"] or "param"
-                            param_value = sdata["param_value"] or "NA"
-                            # _.write(f"Year,Yield,{sdata['param_name']},Region\n")
-                            # _.write(f"Date,TraDef,{sdata['param_name']},Region\n")
-                            # _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{sdata['param_name']},Region\n")
-                            _.write(f"Stage,AvgDaysBelowDST,TotalDaysBelowDST,{param_name},AvgTraDef,Region,SoilType\n")
+                            _.write(f"Stage;AvgDaysBelowDST;TotalDaysBelowDST;{param_name};AvgTraDef;Region;SoilType\n")
 
                         for region, soiltypes in sdata["regions"].items():
                             for soiltype, rdata in soiltypes.items():
-                            # for year in sorted(rdata["year_to_yields"].keys()):
-                            #     yields = rdata["year_to_yields"][year]
-                            #     avg_yield = round(sum(yields) / len(yields), 2) if yields else -9999
-                            #     _.write(f"{year},{avg_yield},{sdata['param_value']},{region}\n")
+                                for stage in sorted(rdata["stage_stats"].keys()):
+                                    stats = rdata["stage_stats"][stage]
 
-                            # for date in sorted(rdata["date_to_tradef"].keys()):
-                            #     tradefs = rdata["date_to_tradef"][date]
-                            #     avg_tradef = round(sum(tradefs) / len(tradefs), 3) if tradefs else -9999
-                            #     _.write(f"{date},{avg_tradef},{sdata['param_value']},{region}\n")
-
-                            # for stage, counts in sorted(rdata["stage_to_days_below_dst"].items()):
-                            #     avg_days = round(sum(counts) / len(counts), 2) if counts else -9999
-                            #     _.write(f"{stage},{avg_days},{sdata['param_value']},{region}\n")
-
-                                for stage in sorted(rdata["stage_to_cell_total_days"].keys()):
-                                    totals = rdata["stage_to_cell_total_days"][stage]
-                                    below = rdata["stage_to_cell_below_days"][stage]
-                                    tradefs = rdata["stage_to_cell_tradef"][stage]
-
-                                    total_days_all = sum(totals.values())
-                                    below_days_all = sum(below.values())
-                                    n_cells = len(totals)
+                                    total_days_all = stats["total_days"]
+                                    below_days_all = stats["below_days"]
+                                    n_cells = len(stats["cells"])
 
                                     if n_cells == 0 or total_days_all == 0:
                                         avg_days = -9999
                                         total_days = 0
+                                        avg_tradef = -9999
                                     else:
                                         avg_days = round(below_days_all / total_days_all, 2)
                                         total_days = round(below_days_all / n_cells, 1)
+                                        avg_tradef = round(stats["tradef_sum"] / stats["tradef_count"], 3)
 
-                                    all_tradef_values = []
-                                    for cell, vals in tradefs.items():
-                                        all_tradef_values.extend(vals)
-
-                                    if len(all_tradef_values) == 0:
-                                        avg_tradef = -9999
-                                    else:
-                                        avg_tradef = round(sum(all_tradef_values) / len(all_tradef_values), 3)
-
-                                    _.write(f"{stage},{avg_days},{total_days},{param_value},{avg_tradef},{region},"
+                                    _.write(f"{stage};{avg_days};{total_days};{param_value};{avg_tradef};{region};"
                                             f"{soiltype}\n")
 
                     print("last expected env received")
