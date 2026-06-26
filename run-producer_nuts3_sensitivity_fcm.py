@@ -494,7 +494,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     if is_sensitivity_analysis:
                         continue
 
-                    env_template["customId"] = {
+                    env = copy.deepcopy(env_template)
+                    env["customId"] = {
                         "setup_id": setup_id,
                         "srow": srow, "scol": scol,
                         "soil_id": soil_id,
@@ -866,14 +867,15 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             # print("unknown_soil_ids:", unknown_soil_ids)
 
         if env_template and is_sensitivity_analysis:
-            env_template["pathToClimateCSV"] = ""
-            env_template["customId"] = {
+            summary_env = copy.deepcopy(env_template)
+            summary_env["pathToClimateCSV"] = ""
+            summary_env["customId"] = {
                 "setup_id": setup_id,
                 "no_of_sent_envs": sent_env_count,
                 "is_sensitivity_analysis": is_sensitivity_analysis
             }
             print(f"Sending summary: setup {setup_id}, no_of_sent_envs={sent_env_count}")
-            socket.send_json(env)
+            socket.send_json(summary_env)
 
             # print("crows/cols:", crows_cols)
         # cs__.close()
