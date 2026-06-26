@@ -28,6 +28,7 @@ Note: consumer and producer python scripts from the historical setups (**`run-co
 - **`sim.json`**: Sim JSON used for this setup
 - **`run-producer_nuts3_hist.py`**: Updated Producer script for NUTS3-level with soiltype simulations
 - **`run-consumer_nuts3_hist.py`**: Updated Consumer script to aggregate NUTS3-level results by soiltype
+- **`run-producer_nuts3_hist_fcm.py`**: Producer script for NUTS3-level with soiltype and NUTS3-specific field condition modifiers
 
 ### NUTS3 Sensitivity Analysis
 
