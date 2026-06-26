@@ -361,7 +361,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                                 except (TypeError, ValueError):
                                     continue
 
-                                threshold = float(sdata["param_value"]) if (sdata["param_value"]) not in [None,"NA"] \
+                                threshold = float(sdata["param_value"]) if (sdata["param_value"]) not in [None, "NA"] \
                                     else 0.0
 
                                 cell = (row, col)

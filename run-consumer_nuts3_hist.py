@@ -15,7 +15,7 @@
 # Landscape Systems Analysis at the ZALF.
 # Copyright (C: Leibniz Centre for Agricultural Landscape Research (ZALF)
 
-from collections import defaultdict, OrderedDict
+from collections import defaultdict
 import csv
 import numpy as np
 import os
@@ -78,7 +78,7 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         write_row_to_grids.nodata_row_count = defaultdict(lambda: 0)
         write_row_to_grids.list_of_output_files = defaultdict(list)
 
-    make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=np.float))
+    make_dict_nparr = lambda: defaultdict(lambda: np.full((ncols,), -9999, dtype=float))
 
     output_grids = {
         "Yield": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
@@ -228,7 +228,6 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
     write_normal_output_files = False
 
     path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-projects-dir"])
-    # path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-data-dir"])
     soil_epsg_code = int(path_to_soil_grid.split("/")[-1].split("_")[2])
     soil_crs = CRS.from_epsg(soil_epsg_code)
     soil_metadata, header = Mrunlib.read_header(path_to_soil_grid)
@@ -300,11 +299,13 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
         "regions": defaultdict(
             lambda: defaultdict(
                 lambda: {
-                    "cells": set(),
-                    "stage_to_cell_below_days": defaultdict(lambda: defaultdict(int)),
-                    "stage_to_cell_total_days": defaultdict(lambda: defaultdict(int)),
-                    "stage_to_tradef_sum": defaultdict(float),
-                    "stage_to_tradef_count": defaultdict(int)
+                    "stage_stats": defaultdict(lambda: {
+                        "below_days": 0,
+                        "total_days": 0,
+                        "tradef_sum": 0.0,
+                        "tradef_count": 0,
+                        "cells": set()
+                    })
                 }
             )
         )
@@ -349,28 +350,32 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
                     row = custom_id.get("srow")
                     col = custom_id.get("scol")
-                    if row is not None and col is not None:
-                        rdata["cells"].add((row, col))
 
                     for data in msg.get("data", []):
                         results = data.get("results", [])
                         for vals in results:
                             if "Date" in vals and "TraDef" in vals and "Stage" in vals:
-                                tradef = float(vals["TraDef"])
-                                stage = int(vals["Stage"])
-                                threshold = float(sdata["param_value"]) if sdata["param_value"] not in [None,
-                                                                                                        "NA"] else 0.0
+                                try:
+                                    stage = int(vals["Stage"])
+                                    tradef = float(vals["TraDef"])
+                                except (TypeError, ValueError):
+                                    continue
+
+                                threshold = float(sdata["param_value"]) if (sdata["param_value"]) not in [None, "NA"] \
+                                    else 0.0
 
                                 cell = (row, col)
-                                rdata["stage_to_tradef_sum"][stage] += tradef
-                                rdata["stage_to_tradef_count"][stage] += 1
-                                rdata["stage_to_cell_total_days"][stage][cell] += 1
+                                stats = rdata["stage_stats"][stage]
+
+                                stats["cells"].add(cell)
+                                stats["total_days"] += 1
+                                stats["tradef_sum"] += tradef
+                                stats["tradef_count"] += 1
 
                                 if tradef < threshold:
-                                    rdata["stage_to_cell_below_days"][stage][cell] += 1
+                                    stats["below_days"] += 1
 
-                expected = sdata["no_of_envs_expected"]
-                if expected is not None and sdata["envs_received"] >= expected:
+                if sdata["no_of_envs_expected"] and sdata["no_of_envs_expected"] == sdata["envs_received"]:
                     path_to_out_dir = config["out"]
                     os.makedirs(path_to_out_dir, exist_ok=True)
 
@@ -378,7 +383,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     write_header = not os.path.isfile(path_to_out_file)
 
                     param_name = sdata["param_name"] or "param"
-                    param_value = sdata["param_value"] if sdata["param_value"] not in [None, ""] else "NA"
+                    param_value = sdata["param_value"] or "NA"
 
                     with open(path_to_out_file, "a") as _:
                         if write_header:
@@ -386,28 +391,21 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
                         for region, soiltypes in sdata["regions"].items():
                             for soiltype, rdata in soiltypes.items():
-                                for stage in sorted(rdata["stage_to_cell_total_days"].keys()):
-                                    totals = rdata["stage_to_cell_total_days"][stage]
-                                    below = rdata["stage_to_cell_below_days"][stage]
+                                for stage in sorted(rdata["stage_stats"].keys()):
+                                    stats = rdata["stage_stats"][stage]
 
-                                    total_days_all = sum(totals.values())
-                                    below_days_all = sum(below.values())
-                                    n_cells = len(totals)
+                                    total_days_all = stats["total_days"]
+                                    below_days_all = stats["below_days"]
+                                    n_cells = len(stats["cells"])
 
                                     if n_cells == 0 or total_days_all == 0:
                                         avg_days = -9999
                                         total_days = 0
+                                        avg_tradef = -9999
                                     else:
                                         avg_days = round(below_days_all / total_days_all, 2)
                                         total_days = round(below_days_all / n_cells, 1)
-
-                                    tradef_sum = rdata["stage_to_tradef_sum"][stage]
-                                    tradef_count = rdata["stage_to_tradef_count"][stage]
-
-                                    if tradef_count == 0:
-                                        avg_tradef = -9999
-                                    else:
-                                        avg_tradef = round(tradef_sum / tradef_count, 3)
+                                        avg_tradef = round(stats["tradef_sum"] / stats["tradef_count"], 3)
 
                                     _.write(f"{stage};{avg_days};{total_days};{param_value};{avg_tradef};{region};"
                                             f"{soiltype}\n")
@@ -418,10 +416,6 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
                     sdata["regions"].clear()
                     sdata["no_of_envs_expected"] = None
                     sdata["envs_received"] = 0
-                    sdata["param_name"] = None
-                    sdata["param_value"] = None
-
-                    process_message.setup_count += 1
 
             else:
                 is_nodata = custom_id["nodata"]

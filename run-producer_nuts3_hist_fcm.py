@@ -136,9 +136,9 @@ DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
 
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
-# TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
+# TEMPLATE_PATH_LATLON = "data/latlon-to-rowcol.json"
 # TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"  # climate projection
-TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz" # historical climate data
+TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz" # historical climate 
 
 TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
 
@@ -178,8 +178,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "sim.json": "sim_projection.json",  #changed for future climate sims
         "crop.json": "crop.json",
         "site.json": "site.json",
-        "setups-file": "sim_setups_projections.csv",   #changed for future climate sims
-        "run-setups": "[15]",
+        "setups-file": "sim_setups_projection.csv",   #changed for future climate sims
+        "run-setups": "[61]",
         "shared_id": shared_id
     }
 
@@ -259,13 +259,22 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # open soil db connection
     soil_db_con = sqlite3.connect(paths["path-to-projects-dir"] + DATA_SOIL_DB)
+    # soil_db_con = sqlite3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB)
     # soil_db_con = cas_sq3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB) #CAS.
     # connect to monica proxy (if local, it will try to connect to a locally started monica)
     socket.connect("tcp://" + config["server"] + ":" + str(config["server-port"]))
 
     # read setup from csv file
     setups = Mrunlib.read_sim_setups(config["setups-file"])
-    run_setups = json.loads(config["run-setups"])
+    rs_ranges = config["run-setups"][1:-1].split(",")
+    run_setups = []
+    for rsr in rs_ranges:
+        rs_r = rsr.split("-")
+        if 1 < len(rs_r) <= 2:
+            run_setups.extend(range(int(rs_r[0]), int(rs_r[1])+1))
+        elif len(rs_r) == 1:
+            run_setups.append(int(rs_r[0]))
+    #run_setups = json.loads(config["run-setups"])
     print("read sim setups: ", config["setups-file"])
 
     # transforms geospatial coordinates from one coordinate reference system to another
@@ -340,7 +349,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_data=setup["crop_data"]
 
         DATA_GRID_CROPS = str("germany/raster/"+crop_data)
-        path_to_crop_grid = paths["path-to-projects-dir"]+DATA_GRID_CROPS  
+        path_to_crop_grid = paths["path-to-projects-dir"] + DATA_GRID_CROPS
         crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
         crop_crs = CRS.from_epsg(crop_epsg_code)
         if crop_crs not in soil_crs_to_x_transformers:
@@ -682,6 +691,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     env["customId"] = {
                         "setup_id": setup_id,
                         "srow": srow, "scol": scol,
+                        "crow": int(crow), "ccol": int(ccol),
                         "soil_id": soil_id,
                         "env_id": sent_env_count,
                         "nodata": True,
