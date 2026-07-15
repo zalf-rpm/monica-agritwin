@@ -147,8 +147,8 @@ TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HAR
 NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
 
 gdf = gpd.read_file(NUTS3_REGIONS)
-gdf["NUTS_ID_INT"] = gdf["NUTS_NAME"].astype("category").cat.codes
-nuts3_lookup = dict(zip(gdf["NUTS_ID_INT"], gdf["NUTS_NAME"]))
+gdf["NUTS_ID_INT"] = gdf["NUTS_ID"].astype("category").cat.codes
+nuts3_lookup = dict(zip(gdf["NUTS_ID_INT"], gdf["NUTS_ID"]))
 
 # Soil type data
 SOILTYPE = "data/germany/buek1000en_v21_25832.shp"
