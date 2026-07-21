@@ -27,11 +27,8 @@ import sys
 import time
 import zmq
 import geopandas as gpd
-import rasterio
-from rasterio import features
 from rasterio.features import rasterize
 from rasterio.transform import from_origin
-import subprocess
 
 import monica_io3
 import soil_io3
@@ -97,9 +94,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_SLOPE = "germany/HEslope_100_25832_etrs89-utm32n.asc"
 
 # Bavaria
-#DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "BAVdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "BAVslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "BAVdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "BAVslope_100_25832_etrs89-utm32n.asc"
 
 # Baden-Württemberg
 #DATA_GRID_SOIL = "germany/BWbuek200_100_25832_etrs89-utm32n.asc"
@@ -132,9 +129,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_SLOPE = "germany/SHslope_100_25832_etrs89-utm32n.asc"
 
 # Thuringia
-DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/THdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_HEIGHT = "germany/THdem_100_25832_etrs89-utm32n.asc"
+# DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
 
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
@@ -232,8 +229,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # height data for germany
     path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
-    #if "LS" in DATA_GRID_HEIGHT or "BAV" in DATA_GRID_HEIGHT:
-    #    path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -245,8 +240,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # slope data
     path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
-    #if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
-    #    path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
