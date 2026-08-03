@@ -73,9 +73,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
 
 # Lower Saxony
-DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "LSdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "LSslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "LSdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "LSslope_100_25832_etrs89-utm32n.asc"
 
 # North Rhine-Westphalia
 #DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
@@ -97,6 +97,11 @@ DATA_GRID_SLOPE = "LSslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_HEIGHT = "BAVdem_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "BAVslope_100_25832_etrs89-utm32n.asc"
 
+# Schleswig-Holstein
+DATA_GRID_SOIL = "germany/SHbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/SHdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/SHslope_100_25832_etrs89-utm32n.asc"
+
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
@@ -108,8 +113,8 @@ TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HAR
 NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
 
 gdf = gpd.read_file(NUTS3_REGIONS)
-gdf["NUTS_ID_INT"] = gdf["NUTS_NAME"].astype("category").cat.codes
-nuts3_lookup = dict(zip(gdf["NUTS_ID_INT"], gdf["NUTS_NAME"]))
+gdf["NUTS_ID_INT"] = gdf["NUTS_ID"].astype("category").cat.codes
+nuts3_lookup = dict(zip(gdf["NUTS_ID_INT"], gdf["NUTS_ID"]))
 
 # Soil type data
 SOILTYPE = "data/germany/buek1000en_v21_25832.shp"
