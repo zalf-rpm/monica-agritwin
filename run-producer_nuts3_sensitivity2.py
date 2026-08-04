@@ -78,8 +78,8 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 
 # Lower Saxony
 DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "LSdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "LSslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
 
 # North Rhine-Westphalia
 #DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
