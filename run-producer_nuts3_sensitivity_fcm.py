@@ -176,7 +176,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "end-row": "-1",
         "path_to_dem_grid": "",
         "sim.json": "sim_projection.json",  #changed for future climate sims
-        "crop.json": "crop.json",
+        "crop.json": "crop2.json",
         "site.json": "site.json",
         "setups-file": "sim_setups_projections.csv",   #changed for future climate sims
         "run-setups": "[15]",
@@ -388,7 +388,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             site_json["EnvironmentParameters"]["rcp"] = scenario
 
         # read template crop.json
-        with open(setup.get("crop2.json", config["crop2.json"])) as _:
+        with open(setup.get("crop.json", config["crop2.json"])) as _:
             crop_json = json.load(_)
 
         crop_json["CropParameters"]["__enable_vernalisation_factor_fix__"] = setup[
