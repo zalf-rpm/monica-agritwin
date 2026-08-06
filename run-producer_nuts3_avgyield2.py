@@ -75,9 +75,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_IRRIGATION = "germany/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
 
 # Lower Saxony
-DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
 
 # North Rhine-Westphalia
 #DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
@@ -115,9 +115,9 @@ DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/RPslope_100_25832_etrs89-utm32n.asc"
 
 # Saarland
-#DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/SAARdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/SAARdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony-Anhalt
 #DATA_GRID_SOIL = "germany/SAbuek200_100_25832_etrs89-utm32n.asc"
