@@ -105,14 +105,14 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_SLOPE = "germany/BWslope_100_25832_etrs89-utm32n.asc"
 
 # Mecklenburg-Western Pomerania
-#DATA_GRID_SOIL = "germany/MVbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/MVdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/MVslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/MVbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/MVdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/MVslope_100_25832_etrs89-utm32n.asc"
 
 # Rheinhessen-Pfalz
-DATA_GRID_SOIL = "germany/RPbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/RPdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/RPslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/RPbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/RPdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/RPslope_100_25832_etrs89-utm32n.asc"
 
 # Saarland
 #DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
