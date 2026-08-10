@@ -122,6 +122,8 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
                                 # only further process/store data we actually received
                                 if key in data:
                                     v = data[key]
+                                    if key == "Yield":
+                                        v /= 1000.0  # Convert kg/ha DM to t/ha DM
                                     if isinstance(v, list):
                                         for i, v_ in enumerate(v):
                                             cmc_and_year_to_vals[(cm_count, data["Year"])][f'{key}_{i + 1}'].append(v_)
