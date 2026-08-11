@@ -86,9 +86,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony
-#DATA_GRID_SOIL = "germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/SAXdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/SAXslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/SAXdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/SAXslope_100_25832_etrs89-utm32n.asc"
 
 # Hessen
 #DATA_GRID_SOIL = "germany/HEbuek200_100_25832_etrs89-utm32n.asc"
@@ -96,9 +96,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_SLOPE = "germany/HEslope_100_25832_etrs89-utm32n.asc"
 
 # Bavaria
-DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/BAVdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/BAVslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/BAVdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/BAVslope_100_25832_etrs89-utm32n.asc"
 
 # Baden-Württemberg
 #DATA_GRID_SOIL = "germany/BWbuek200_100_25832_etrs89-utm32n.asc"
