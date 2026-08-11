@@ -88,12 +88,12 @@ def write_row_to_grids(row_col_data, row, ncols, header, path_to_output_dir, pat
         # "Evapotranspiration": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         # "Act_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1},
         # "Pot_ET": {"data": make_dict_nparr(), "cast-to": "float", "digits": 1}
-         "TraDef_S2" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-         "TraDef_S3" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-         "TraDef_S4" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-         "TraDef_S5" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-         "TraDef_S6" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
-         "TraDef_S7" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2}
+        # "TraDef_S2" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        # "TraDef_S3" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        # "TraDef_S4" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        # "TraDef_S5" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        # "TraDef_S6" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2},
+        # "TraDef_S7" : {"data": make_dict_nparr(), "cast-to": "float", "digits": 2}
     }
     output_keys = list(output_grids.keys())
 
