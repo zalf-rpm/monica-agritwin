@@ -146,9 +146,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_SLOPE = "germany/RPslope_100_25832_etrs89-utm32n.asc"
 
 # Saarland
-#DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/SAARdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/SAARdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony-Anhalt
 #DATA_GRID_SOIL = "germany/SAbuek200_100_25832_etrs89-utm32n.asc"
@@ -161,9 +161,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_SLOPE = "germany/SHslope_100_25832_etrs89-utm32n.asc"
 
 # Thuringia
-DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/THdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/THdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
