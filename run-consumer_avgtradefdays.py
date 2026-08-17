@@ -70,7 +70,7 @@ TRADEF_THRESHOLDS = {
     3: 1,
     4: 1,
     5: 0.9,
-    6: 0.5
+    6: 0.8
 }
 
 def create_output(msg):

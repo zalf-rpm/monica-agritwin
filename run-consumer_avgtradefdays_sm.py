@@ -55,13 +55,13 @@ USE_LANDUSE = False
 
 # silage maize
 TRADEF_THRESHOLDS = {
-     1: 0.5,
-     2: 0.5,
-     3: 0.5,
-     4: 0.5,
-     5: 0.6,
-     6: 0.6,
-     7: 0.2
+     1: 0.8,
+     2: 0.8,
+     3: 0.8,
+     4: 0.8,
+     5: 0.8,
+     6: 0.8,
+     7: 0.8
  }
 
 # winter wheat
