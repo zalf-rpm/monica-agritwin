@@ -345,7 +345,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_data=setup["crop_data"]
 
         DATA_GRID_CROPS = str("germany/raster/"+crop_data)
-        path_to_crop_grid = paths["path-to-data-dir"]+DATA_GRID_CROPS
+        path_to_crop_grid = paths["path-to-projects-dir"]+DATA_GRID_CROPS
         crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[2])
         crop_crs = CRS.from_epsg(crop_epsg_code)
         if crop_crs not in soil_crs_to_x_transformers:
@@ -357,7 +357,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
         if region_name and len(region_name) > 0:
             # Create the soil mask for the specific region
-            path_to_soil_grid = paths["path-to-data-dir"] + DATA_GRID_SOIL
+            path_to_soil_grid = paths["path-to-projects-dir"] + DATA_GRID_SOIL
             mask = create_mask_from_shapefile(NUTS3_REGIONS, region_name, path_to_soil_grid)
 
             # Apply the soil mask to the soil grid
