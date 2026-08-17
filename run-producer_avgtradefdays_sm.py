@@ -100,15 +100,65 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 
 # Lower Saxony 100 m
 DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "LSdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "LSslope_100_25832_etrs89-utm32n.asc"
-DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
+DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
 # DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # North Rhine-Westphalia 100 m
-# DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
+
+# Bavaria
+#DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/BAVdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/BAVslope_100_25832_etrs89-utm32n.asc"
+
+# Saxony
+#DATA_GRID_SOIL = "germany/SAXbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/SAXdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/SAXslope_100_25832_etrs89-utm32n.asc"
+
+# Hessen
+#DATA_GRID_SOIL = "germany/HEbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/HEdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/HEslope_100_25832_etrs89-utm32n.asc"
+
+# Baden-Württemberg
+#DATA_GRID_SOIL = "germany/BWbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/BWdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/BWslope_100_25832_etrs89-utm32n.asc"
+
+# Mecklenburg-Western Pomerania
+#DATA_GRID_SOIL = "germany/MVbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/MVdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/MVslope_100_25832_etrs89-utm32n.asc"
+
+# Rheinhessen-Pfalz
+#DATA_GRID_SOIL = "germany/RPbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/RPdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/RPslope_100_25832_etrs89-utm32n.asc"
+
+# Saarland
+#DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/SAARdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
+
+# Saxony-Anhalt
+#DATA_GRID_SOIL = "germany/SAbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/SAdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/SAslope_100_25832_etrs89-utm32n.asc"
+
+# Schleswig-Holstein
+#DATA_GRID_SOIL = "germany/SHbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/SHdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/SHslope_100_25832_etrs89-utm32n.asc"
+
+# Thuringia
+#DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/THdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
@@ -160,7 +210,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     # select paths 
     paths = PATHS[config["mode"]]
     # open soil db connection
-    soil_db_con = sqlite3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB)
+    soil_db_con = sqlite3.connect(paths["path-to-projects-dir"] + DATA_SOIL_DB)
     # soil_db_con = cas_sq3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB) #CAS.
     # connect to monica proxy (if local, it will try to connect to a locally started monica)
     socket.connect("tcp://" + config["server"] + ":" + str(config["server-port"]))
@@ -192,7 +242,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     ## note numpy is able to load from a compressed file, ending with .gz or .bz2
 
     # soil data
-    path_to_soil_grid = paths["path-to-data-dir"] + DATA_GRID_SOIL
+    path_to_soil_grid = paths["path-to-projects-dir"] + DATA_GRID_SOIL
     soil_epsg_code = int(path_to_soil_grid.split("/")[-1].split("_")[2])
     soil_crs = CRS.from_epsg(soil_epsg_code)
     if wgs84_crs not in soil_crs_to_x_transformers:
@@ -202,9 +252,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     print("read: ", path_to_soil_grid)
 
     # height data for germany
-    path_to_dem_grid = paths["path-to-data-dir"] + DATA_GRID_HEIGHT
-    if "LS" in DATA_GRID_HEIGHT or "BAV" in DATA_GRID_HEIGHT:
-        path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
+    path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
+    #if "LS" in DATA_GRID_HEIGHT or "BAV" in DATA_GRID_HEIGHT:
+    #    path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -215,9 +265,9 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     print("read: ", path_to_dem_grid)
 
     # slope data
-    path_to_slope_grid = paths["path-to-data-dir"] + DATA_GRID_SLOPE
-    if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
-        path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
+    path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
+    #if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
+    #    path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
