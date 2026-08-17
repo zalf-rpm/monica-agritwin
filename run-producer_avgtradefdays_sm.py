@@ -289,15 +289,15 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     #print("read: ", path_to_crop_grid)
 
     # irrigation data
-    path_to_irrigation_grid = paths["path-to-data-dir"] + DATA_GRID_IRRIGATION
-    irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[2])
-    irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
-    if irrigation_crs not in soil_crs_to_x_transformers:
-       soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
-    irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
-    irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
-    irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata)
-    print("read: ", path_to_irrigation_grid)
+    #path_to_irrigation_grid = paths["path-to-projects-dir"] + DATA_GRID_IRRIGATION
+    #irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[2])
+    #irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
+    #if irrigation_crs not in soil_crs_to_x_transformers:
+    #   soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
+    #irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
+    #irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
+    #irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata)
+    #print("read: ", path_to_irrigation_grid)
 
     # initialize irrigation manager
     irrigation_manager = IrrigationManager("irrigated_crops.json")
