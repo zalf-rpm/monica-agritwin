@@ -16,7 +16,6 @@
 # Copyright (C: Leibniz Centre for Agricultural Landscape Research (ZALF)
 
 from collections import defaultdict
-import copy
 from datetime import date, timedelta
 import json
 import numpy as np
@@ -27,13 +26,14 @@ import sys
 import time
 import zmq
 import geopandas as gpd
-import pandas as pd
-from rasterio.features import rasterize
-from rasterio.transform import from_origin
+import rasterio
+from rasterio import features
+import subprocess
 
 import monica_io3
 import soil_io3
 import monica_run_lib as Mrunlib
+from irrigation_manager import IrrigationManager
 
 PATHS = {
     # adjust the local path to your environment
@@ -47,6 +47,25 @@ PATHS = {
         "path-to-projects-dir": "./data/germany/",
         "path-debug-write-folder": "./debug-out/",
     },
+    "mbm-local-remote": {
+        # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
+        "path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
+        # mounted path to archive or hard drive with climate data
+        "monica-path-to-climate-dir": "/monica_data/climate-data/",
+        # mounted path to archive accessable by monica executable
+        "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
+        "path-debug-write-folder": "./debug-out/",
+    },
+    "mbm-local-local": {
+        # "include-file-base-path": "/home/berg/GitHub/monica-parameters/", # path to monica-parameters
+        "path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
+        # mounted path to archive or hard drive with climate data
+        "monica-path-to-climate-dir": "/run/user/1000/gvfs/sftp:host=login01.cluster.zalf.de,user=rpm/beegfs/common/data/climate/",
+        # mounted path to archive accessable by monica executable
+        "path-to-data-dir": "./data/",  # mounted path to archive or hard drive with data
+        "path-debug-write-folder": "./debug-out/",
+    },
+
     "remoteProducer-remoteMonica": {
         # "include-file-base-path": "/monica-parameters/", # path to monica-parameters
         "path-to-climate-dir": "/data/",  # mounted path to archive or hard drive with climate data
@@ -72,24 +91,19 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 # DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
 # DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 
-# Germany 100 m
+# Brandenburg 100 m
 #DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
-
-# Brandenburg 100 m
-#DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/BBdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
+#DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
 #DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # Lower Saxony 100 m
-# DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
-#DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
+# DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # North Rhine-Westphalia 100 m
 #DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
@@ -147,18 +161,15 @@ DATA_GRID_SLOPE = "germany/HEslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
-# TEMPLATE_PATH_LATLON = "data/latlon-to-rowcol.json"
-#TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv" # climate projection
-TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz" # historical climate data
-
-TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
+# TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
+TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz" #historical climate
 
 # Additional data for masking the regions
 NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
 
+TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
+
 gdf = gpd.read_file(NUTS3_REGIONS)
-gdf["NUTS_ID_INT"] = gdf["NUTS_ID"].astype("category").cat.codes
-nuts3_lookup = dict(zip(gdf["NUTS_ID_INT"], gdf["NUTS_ID"]))
 
 DEBUG_DONOT_SEND = False
 DEBUG_WRITE = False
@@ -179,11 +190,11 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "start-row": "0",
         "end-row": "-1",
         "path_to_dem_grid": "",
-        "sim.json": "sim_avgtradefdays.json",
+        "sim.json": "sim.json",
         "crop.json": "crop.json",
         "site.json": "site.json",
         "setups-file": "sim_setups_germany.csv",
-        "run-setups": "[42]",
+        "run-setups": "[1]",
         "shared_id": shared_id
     }
 
@@ -198,70 +209,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # select paths 
     paths = PATHS[config["mode"]]
-
-    # Load all crop-specific regional parameter files
-    crop_param_tables = {}
-
-    for fname in os.listdir("."):
-        if fname.endswith("_param_nuts3.csv"):
-            crop_code = fname.split("_param_nuts3.csv")[0]
-
-            df = pd.read_csv(fname, sep=";")
-            df["NUTS_id"] = df["NUTS_id"].astype(str).str.strip()
-
-            region_lookup = {}
-            for _, row in df.iterrows():
-                row_dict = row.to_dict()
-
-                nuts_id = str(row_dict.pop("NUTS_id")).strip()
-
-                cleaned = {}
-                for k, v in row_dict.items():
-                    if pd.isna(v):
-                        continue
-                    try:
-                        cleaned[k] = float(v)
-                    except Exception:
-                        cleaned[k] = v
-
-                region_lookup[nuts_id] = cleaned
-
-            crop_param_tables[crop_code] = region_lookup
-
-    print("Loaded regional crop parameter files for crops:", sorted(crop_param_tables.keys()))
-
-
-    def apply_regional_crop_params(env, crop_code, nuts3_id):
-        if not nuts3_id:
-            return None
-
-        crop_lookup = crop_param_tables.get(crop_code)
-
-        if not crop_lookup:
-            return None
-
-        region_params = crop_lookup.get(str(nuts3_id).strip())
-        if not region_params:
-            return None
-
-        species_params = env["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"]
-        cultivar_params = env["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"]
-
-        # apply values dynamically depending on which columns exist in the csv
-        for param_name, param_value in region_params.items():
-            if param_name == "region_id":
-                continue
-
-            if param_name in species_params:
-                species_params[param_name] = param_value
-            elif param_name in cultivar_params:
-                cultivar_params[param_name] = param_value
-            else:
-                print(
-                    f"Parameter '{param_name}' from {crop_code}_params_nuts3.csv not found in species or cultivar params")
-
-        return region_params
-
     # open soil db connection
     soil_db_con = sqlite3.connect(paths["path-to-projects-dir"] + DATA_SOIL_DB)
     # soil_db_con = cas_sq3.connect(paths["path-to-data-dir"] + DATA_SOIL_DB) #CAS.
@@ -306,6 +253,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # height data for germany
     path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
+    #if "LS" in DATA_GRID_HEIGHT or "BAV" in DATA_GRID_HEIGHT:
+    #    path_to_dem_grid = paths["path-to-projects-dir"] + DATA_GRID_HEIGHT
     dem_epsg_code = int(path_to_dem_grid.split("/")[-1].split("_")[2])
     dem_crs = CRS.from_epsg(dem_epsg_code)
     if dem_crs not in soil_crs_to_x_transformers:
@@ -317,6 +266,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
     # slope data
     path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
+    #if "LS" in DATA_GRID_SLOPE or "BAV" in DATA_GRID_HEIGHT:
+    #    path_to_slope_grid = paths["path-to-projects-dir"] + DATA_GRID_SLOPE
     slope_epsg_code = int(path_to_slope_grid.split("/")[-1].split("_")[2])
     slope_crs = CRS.from_epsg(slope_epsg_code)
     if slope_crs not in soil_crs_to_x_transformers:
@@ -325,6 +276,47 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
     slope_grid = np.loadtxt(path_to_slope_grid, dtype=float, skiprows=6)
     slope_interpolate = Mrunlib.create_ascii_grid_interpolator(slope_grid, slope_metadata)
     print("read: ", path_to_slope_grid)
+
+    # crop mask data
+    #path_to_crop_grid = paths["path-to-data-dir"] + DATA_GRID_CROPS
+    #crop_epsg_code = int(path_to_crop_grid.split("/")[-1].split("_")[4])
+    #crop_crs = CRS.from_epsg(crop_epsg_code)
+    #if crop_crs not in soil_crs_to_x_transformers:
+    #   soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
+    #crop_meta, _ = Mrunlib.read_header(path_to_crop_grid)
+    #crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
+    #crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
+    #print("read: ", path_to_crop_grid)
+
+    # irrigation data
+    #path_to_irrigation_grid = paths["path-to-projects-dir"] + DATA_GRID_IRRIGATION
+    #irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[2])
+    #irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
+    #if irrigation_crs not in soil_crs_to_x_transformers:
+    #   soil_crs_to_x_transformers[irrigation_crs] = Transformer.from_crs(soil_crs, irrigation_crs)
+    #irrigation_metadata, _ = Mrunlib.read_header(path_to_irrigation_grid)
+    #irrigation_grid = np.loadtxt(path_to_irrigation_grid, dtype=int, skiprows=6)
+    #irrigation_interpolate = Mrunlib.create_ascii_grid_interpolator(irrigation_grid, irrigation_metadata)
+    #print("read: ", path_to_irrigation_grid)
+
+    # initialize irrigation manager
+    irrigation_manager = IrrigationManager("irrigated_crops.json")
+
+    # Create the function for the mask. This function will later use the additional column in a setup file!
+    def create_mask_from_shapefile(NUTS1_REGIONS, region_name, path_to_soil_grid):
+        regions_df = gpd.read_file(NUTS1_REGIONS)
+        region = regions_df[regions_df["NUTS_NAME"] == region_name]
+
+        # This is needed to read the transformation data correctly from the file. With the original opening it does not work
+        with rasterio.open(path_to_soil_grid) as dataset:
+            soil_grid = dataset.read(1)
+            transform = dataset.transform
+
+        rows, cols = soil_grid.shape
+        mask = rasterio.features.geometry_mask([region.geometry.values[0]], out_shape=(rows, cols), transform=transform,
+                                               invert=True)
+
+        return mask
 
     sent_env_count = 0
     start_time = time.perf_counter()
@@ -360,7 +352,18 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             soil_crs_to_x_transformers[crop_crs] = Transformer.from_crs(soil_crs, crop_crs)
         crop_meta, _ = Mrunlib.read_header(path_to_crop_grid)
         crop_grid = np.loadtxt(path_to_crop_grid, dtype=int, skiprows=6)
+        crop_interpolate = Mrunlib.create_ascii_grid_interpolator(crop_grid, crop_meta)
         print("read: ", path_to_crop_grid)
+
+        if region_name and len(region_name) > 0:
+            # Create the soil mask for the specific region
+            path_to_soil_grid = paths["path-to-projects-dir"] + DATA_GRID_SOIL
+            mask = create_mask_from_shapefile(NUTS3_REGIONS, region_name, path_to_soil_grid)
+
+            # Apply the soil mask to the soil grid
+            soil_grid_copy = soil_grid.copy()
+            soil_grid[mask == False] = -8888
+            soil_grid[soil_grid_copy == -9999] = -9999
 
         # add crop id from setup file
         try:
@@ -377,6 +380,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             continue
 
         cdict = {}
+        # path to latlon-to-rowcol.json
+        # path = TEMPLATE_PATH_LATLON.format(path_to_climate_dir=paths["path-to-climate-dir"] + setup["climate_path_to_latlon_file"] + "/")
         path = TEMPLATE_PATH_LATLON.format(
             path_to_climate_dir=paths["path-to-climate-dir"] + setup["climate_path_to_latlon_file"] + "/")
         climate_data_interpolator = Mrunlib.create_climate_geoGrid_interpolator_from_json_file(path, wgs84_crs,
@@ -435,11 +440,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         # cs__ = open("coord_mapping_etrs89-utm32n_to_wgs84-latlon.csv", "w")
         # cs__.write("row,col,center_25832_etrs89-utm32n_r,center_25832_etrs89-utm32n_h,center_lat,center_lon\n")
 
-        # Rasterize NUTS3 regions shapefile
-        transform = from_origin(xllcorner, yllcorner + srows * scellsize, scellsize, scellsize)
-        nuts3_raster = rasterize(((geom, value) for geom, value in zip(gdf.geometry, gdf["NUTS_ID_INT"])),
-                                 out_shape=(srows, scols), transform=transform, fill=nodata_value, dtype='int32')
-
         for srow in range(0, srows):
             print(srow, end=", ")
 
@@ -453,13 +453,20 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 if soil_id == nodata_value:
                     continue
 
-                crop_grid_id = int(crop_grid[srow, scol])
-                if crop_grid_id != 1 or soil_id == -8888:
+                # get coordinate of clostest climate element of real soil-cell
+                sh = yllcorner + (scellsize / 2) + (srows - srow - 1) * scellsize
+                sr = xllcorner + (scellsize / 2) + scol * scellsize
+                # inter = crow/ccol encoded into integer
+                crow, ccol = climate_data_interpolator(sr, sh)
 
+                crop_grid_id = int(crop_grid[srow, scol])
+                # print(crop_grid_id)
+                if crop_grid_id != 1 or soil_id == -8888:
+                    # print("row/col:", srow, "/", scol, "is not a crop pixel.")
                     env_template["customId"] = {
                         "setup_id": setup_id,
                         "srow": srow, "scol": scol,
-                        # "crow": int(crow), "ccol": int(ccol),
+                        "crow": int(crow), "ccol": int(ccol),
                         "soil_id": soil_id,
                         "env_id": sent_env_count,
                         "nodata": True,
@@ -469,25 +476,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
                         sent_env_count += 1
                     continue
-
-                # get coordinate of closest climate element of real soil-cell
-                sh = yllcorner + (scellsize / 2) + (srows - srow - 1) * scellsize
-                sr = xllcorner + (scellsize / 2) + scol * scellsize
-                # inter = crow/ccol encoded into integer
-                crow, ccol = climate_data_interpolator(sr, sh)
-
-                # Get the NUTS3 region code for the current grid cell
-                nuts3_id = int(nuts3_raster[srow, scol])
-                region_name = nuts3_lookup[nuts3_id] if nuts3_id != nodata_value else None
-
-                env = copy.deepcopy(env_template)
-
-                worksteps = env["cropRotation"][0]["worksteps"]
-                sowing_ws = next(filter(lambda ws: ws["type"][-6:] == "Sowing", worksteps))
-                harvest_ws = next(filter(lambda ws: ws["type"][-7:] == "Harvest", worksteps))
-
-                crop_code = crop_id_short
-                apply_regional_crop_params(env, crop_code, region_name)
 
                 tcoords = {}
 
@@ -508,6 +496,10 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 else:
                     soil_profile = soil_io3.soil_parameters(soil_db_con, soil_id)
                     soil_id_cache[soil_id] = soil_profile
+
+                worksteps = env_template["cropRotation"][0]["worksteps"]
+                sowing_ws = next(filter(lambda ws: ws["type"][-6:] == "Sowing", worksteps))
+                harvest_ws = next(filter(lambda ws: ws["type"][-7:] == "Harvest", worksteps))
 
                 ilr_interpolate = ilr_seed_harvest_data[crop_id_short]["interpolate"]
                 seed_harvest_cs = ilr_interpolate(sr, sh) if ilr_interpolate else None
@@ -637,7 +629,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     # print("row/col:", srow, "/", scol, "has unknown soil_id:", soil_id)
                     # unknown_soil_ids.add(soil_id)
 
-                    env["customId"] = {
+                    env_template["customId"] = {
                         "setup_id": setup_id,
                         "srow": srow, "scol": scol,
                         "crow": int(crow), "ccol": int(ccol),
@@ -646,8 +638,8 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         "nodata": True,
                     }
                     if not DEBUG_DONOT_SEND:
-                        socket.send_json(env)
-                        # print("sent nodata env ", sent_env_count, " customId: ", env["customId"])
+                        socket.send_json(env_template)
+                        # print("sent nodata env ", sent_env_count, " customId: ", env_template["customId"])
                         sent_env_count += 1
                     continue
 
@@ -661,11 +653,16 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 slr, slh = tcoords[slope_crs]
                 slope = slope_interpolate(slr, slh)
 
-                env["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = setup[
+                #if irrigation_crs not in tcoords:
+                #   tcoords[irrigation_crs] = soil_crs_to_x_transformers[irrigation_crs].transform(sr, sh)
+                #irr_r, irr_h = tcoords[irrigation_crs]
+                #irrigation = int(irrigation_interpolate(irr_r, irr_h))
+
+                env_template["params"]["userCropParameters"]["__enable_T_response_leaf_expansion__"] = setup[
                     "LeafExtensionModifier"]
 
                 # print("soil:", soil_profile)
-                env["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
+                env_template["params"]["siteParameters"]["SoilProfileParameters"] = soil_profile
 
                 # setting groundwater level
                 if setup["groundwater-level"]:
@@ -677,16 +674,16 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             # print("setting groundwaterlevel of soil_id:", str(soil_id), "to", groundwaterlevel, "m")
                             break
                         layer_depth += Mrunlib.get_value(layer["Thickness"])
-                    env["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
-                    env["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
+                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepthMonth"] = 3
+                    env_template["params"]["userEnvironmentParameters"]["MinGroundwaterDepth"] = [
                         max(0, groundwaterlevel - 0.2), "m"]
-                    env["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
+                    env_template["params"]["userEnvironmentParameters"]["MaxGroundwaterDepth"] = [
                         groundwaterlevel + 0.2, "m"]
 
                 # setting impenetrable layer
                 if setup["impenetrable-layer"]:
                     impenetrable_layer_depth = Mrunlib.get_value(
-                        env["params"]["userEnvironmentParameters"]["LeachingDepth"])
+                        env_template["params"]["userEnvironmentParameters"]["LeachingDepth"])
                     layer_depth = 0
                     for layer in soil_profile:
                         if layer.get("is_impenetrable", False):
@@ -694,59 +691,94 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                             # print("setting leaching depth of soil_id:", str(soil_id), "to", impenetrable_layer_depth, "m")
                             break
                         layer_depth += Mrunlib.get_value(layer["Thickness"])
-                    env["params"]["userEnvironmentParameters"]["LeachingDepth"] = [impenetrable_layer_depth,
+                    env_template["params"]["userEnvironmentParameters"]["LeachingDepth"] = [impenetrable_layer_depth,
                                                                                             "m"]
-                    env["params"]["siteParameters"]["ImpenetrableLayerDepth"] = [impenetrable_layer_depth, "m"]
+                    env_template["params"]["siteParameters"]["ImpenetrableLayerDepth"] = [impenetrable_layer_depth, "m"]
 
                 if setup["elevation"]:
-                    env["params"]["siteParameters"]["heightNN"] = float(height_nn)
+                    env_template["params"]["siteParameters"]["heightNN"] = float(height_nn)
 
                 if setup["slope"]:
-                    env["params"]["siteParameters"]["slope"] = slope / 100.0
+                    env_template["params"]["siteParameters"]["slope"] = slope / 100.0
 
                 if setup["latitude"]:
                     clat, _ = cdict[(crow, ccol)]
-                    env["params"]["siteParameters"]["Latitude"] = clat
+                    env_template["params"]["siteParameters"]["Latitude"] = clat
 
                 if setup["CO2"]:
-                    env["params"]["userEnvironmentParameters"]["AtmosphericCO2"] = float(setup["CO2"])
+                    env_template["params"]["userEnvironmentParameters"]["AtmosphericCO2"] = float(setup["CO2"])
 
                 if setup["O3"]:
-                    env["params"]["userEnvironmentParameters"]["AtmosphericO3"] = float(setup["O3"])
+                    env_template["params"]["userEnvironmentParameters"]["AtmosphericO3"] = float(setup["O3"])
 
-                # if setup["FieldConditionModifier"]:
-                #     env["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"][
-                #         "FieldConditionModifier"] = float(setup["FieldConditionModifier"])
+                if setup["FieldConditionModifier"]:
+                    env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["species"][
+                        "FieldConditionModifier"] = float(setup["FieldConditionModifier"])
 
                 if setup["StageTemperatureSum"]:
                     stage_ts = setup["StageTemperatureSum"].split('_')
                     stage_ts = [int(temp_sum) for temp_sum in stage_ts]
-                    orig_stage_ts = env["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"][
+                    orig_stage_ts = env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"][
                         "StageTemperatureSum"][0]
                     if len(stage_ts) != len(orig_stage_ts):
                         stage_ts = orig_stage_ts
                         print('The provided StageTemperatureSum array is not '
                               'sufficiently long. Falling back to original StageTemperatureSum')
 
-                    env["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"][
+                    env_template["cropRotation"][0]["worksteps"][0]["crop"]["cropParams"]["cultivar"][
                         "StageTemperatureSum"][0] = stage_ts
 
-                env["params"]["simulationParameters"]["UseNMinMineralFertilisingMethod"] = setup["fertilization"]
+                env_template["params"]["simulationParameters"]["UseNMinMineralFertilisingMethod"] = setup[
+                    "fertilization"]
 
-                env["params"]["simulationParameters"]["NitrogenResponseOn"] = setup["NitrogenResponseOn"]
-                env["params"]["simulationParameters"]["WaterDeficitResponseOn"] = setup["WaterDeficitResponseOn"]
-                env["params"]["simulationParameters"]["EmergenceMoistureControlOn"] = setup[
+                #if setup["irrigation"] and irrigation == 1:
+                #    # check if the crop type is in the irrigated crops map
+                #    if irrigation_manager.should_be_irrigated_by_crop_id(setup["crop-id"]):
+                #        env_template["params"]["simulationParameters"]["UseAutomaticIrrigation"] = True
+                #        # add default values for irrigation amount and threshold
+                #        env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [10, "mm"]
+                #        env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
+                #            "trigger_if_nFC_below_%"] = [30, "%"]
+                #        env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
+                #            "set_to_%nFC"] = [100, "%"]
+                #        env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
+                #            "calc_nFC_until_depth_m"] = [0.3, "m"]
+                #        # print("irrigation amount:",
+                #        #       env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"])
+                #    else:
+                #        env_template["params"]["simulationParameters"]["UseAutomaticIrrigation"] = False
+                #        # reset irrigation amount and threshold
+                #        env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [0, "mm"]
+                #        env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
+                #            "trigger_if_nFC_below_%"] = [50, "%"]
+                #        env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
+                #            "set_to_%nFC"] = [100, "%"]
+                #        env_template["params"]["simulationParameters"]["AutoIrrigationParams"][
+                #            "calc_nFC_until_depth_m"] = [0.5, "m"]
+                #else:
+                #    env_template["params"]["simulationParameters"]["UseAutomaticIrrigation"] = False
+                #    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [0, "mm"]
+                #    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["trigger_if_nFC_below_%"] = [
+                #        50, "%"]
+                #    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["set_to_%nFC"] = [100, "%"]
+                #    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["calc_nFC_until_depth_m"] = [
+                #        0.5, "m"]
+
+                env_template["params"]["simulationParameters"]["NitrogenResponseOn"] = setup["NitrogenResponseOn"]
+                env_template["params"]["simulationParameters"]["WaterDeficitResponseOn"] = setup[
+                    "WaterDeficitResponseOn"]
+                env_template["params"]["simulationParameters"]["EmergenceMoistureControlOn"] = setup[
                     "EmergenceMoistureControlOn"]
-                env["params"]["simulationParameters"]["EmergenceFloodingControlOn"] = setup[
+                env_template["params"]["simulationParameters"]["EmergenceFloodingControlOn"] = setup[
                     "EmergenceFloodingControlOn"]
 
-                env["csvViaHeaderOptions"] = sim_json["climate.csv-options"]
+                env_template["csvViaHeaderOptions"] = sim_json["climate.csv-options"]
 
                 subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario=scenario, ensmem=ensmem,
                                                                   version=version, crow=str(int(crow)), ccol=str(int(ccol)))
                 for _ in range(4):
                     subpath_to_csv = subpath_to_csv.replace("//", "/")
-                env["pathToClimateCSV"] = [
+                env_template["pathToClimateCSV"] = [
                     paths["monica-path-to-climate-dir"] + setup["climate_path_to_csvs"] + "/" + subpath_to_csv]
                 if setup["incl_hist"]:
 
@@ -757,7 +789,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                                                                                ccol=str(ccol))
                         for _ in range(4):
                             hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
-                        env["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
+                        env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
                             "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
 
                     elif rcm[:3] == "SMH":
@@ -767,7 +799,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                                                                                ccol=str(ccol))
                         for _ in range(4):
                             hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
-                        env["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
+                        env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
                             "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
 
                     hist_subpath_to_csv = TEMPLATE_PATH_CLIMATE_CSV.format(gcm=gcm, rcm=rcm, scenario="historical",
@@ -775,13 +807,13 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                                                                            crow=str(crow), ccol=str(ccol))
                     for _ in range(4):
                         hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
-                    env["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
+                    env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
                         "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
-                # print("pathToClimateCSV:", env["pathToClimateCSV"])
+                # print("pathToClimateCSV:", env_template["pathToClimateCSV"])
                 if DEBUG_WRITE_CLIMATE:
                     listOfClimateFiles.add(subpath_to_csv)
 
-                env["customId"] = {
+                env_template["customId"] = {
                     "setup_id": setup_id,
                     "srow": srow, "scol": scol,
                     "crow": int(crow), "ccol": int(ccol),
@@ -790,9 +822,18 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     "nodata": False
                 }
 
+                # print("Harvest type:", setup["harvest-date"])
+                # print("Srow: ", env_template["customId"]["srow"], "Scol:", env_template["customId"]["scol"])
+                harvest_ws = next(
+                    filter(lambda ws: ws["type"][-7:] == "Harvest", env_template["cropRotation"][0]["worksteps"]))
+                # if setup["harvest-date"] == "fixed":
+                #     print("Harvest-date:", harvest_ws["date"])
+                # elif setup["harvest-date"] == "auto":
+                #     print("Harvest-date:", harvest_ws["latest-date"])
+
                 if not DEBUG_DONOT_SEND:
-                    socket.send_json(env)
-                    # print("sent env ", sent_env_count, " customId: ", env["customId"])
+                    socket.send_json(env_template)
+                    # print("sent env ", sent_env_count, " customId: ", env_template["customId"])
 
                 sent_env_count += 1
 
@@ -808,7 +849,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
                         if not os.path.isfile(path_to_debug_file):
                             with open(path_to_debug_file, "w") as _:
-                                _.write(json.dumps(env))
+                                _.write(json.dumps(env_template))
                         else:
                             print("WARNING: Row ", (sent_env_count - 1), " already exists")
             # print("unknown_soil_ids:", unknown_soil_ids)
