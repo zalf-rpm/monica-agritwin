@@ -91,16 +91,11 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 # DATA_GRID_IRRIGATION = "germany/raster_backup/irrigation_1000_25832_etrs89-utm32n_other_18.asc"  # potato and sugar beet 2018 irrigation map
 # DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 
-# Germany 100 m
+# Brandenburg 100 m
 #DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
-
-# Brandenburg 100 m
-#DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/BBdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
+#DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
 #DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # Lower Saxony 100 m
@@ -108,7 +103,7 @@ DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
 DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
-#DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
+# DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # North Rhine-Westphalia 100 m
 #DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
@@ -167,8 +162,7 @@ DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
-#TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv" # climate projection
-TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz" # historical climate data
+TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz" #historical climate
 
 # Additional data for masking the regions
 NUTS3_REGIONS = "data/germany/NUTS_RG_03M_25832.shp"
@@ -196,10 +190,10 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         "start-row": "0",
         "end-row": "-1",
         "path_to_dem_grid": "",
-        "sim.json": "sim_projection.json",
+        "sim.json": "sim.json",
         "crop.json": "crop.json",
         "site.json": "site.json",
-        "setups-file": "sim_setups_projection.csv",
+        "setups-file": "sim_setups_germany.csv",
         "run-setups": "[1]",
         "shared_id": shared_id
     }
@@ -767,7 +761,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 #    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["trigger_if_nFC_below_%"] = [
                 #        50, "%"]
                 #    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["set_to_%nFC"] = [100, "%"]
-                #   env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["calc_nFC_until_depth_m"] = [
+                #    env_template["params"]["simulationParameters"]["AutoIrrigationParams"]["calc_nFC_until_depth_m"] = [
                 #        0.5, "m"]
 
                 env_template["params"]["simulationParameters"]["NitrogenResponseOn"] = setup["NitrogenResponseOn"]
@@ -815,7 +809,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                         hist_subpath_to_csv = hist_subpath_to_csv.replace("//", "/")
                     env_template["pathToClimateCSV"].insert(0, paths["monica-path-to-climate-dir"] + setup[
                         "climate_path_to_csvs"] + "/" + hist_subpath_to_csv)
-                print("pathToClimateCSV:", env_template["pathToClimateCSV"])
+                # print("pathToClimateCSV:", env_template["pathToClimateCSV"])
                 if DEBUG_WRITE_CLIMATE:
                     listOfClimateFiles.add(subpath_to_csv)
 
@@ -829,7 +823,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                 }
 
                 # print("Harvest type:", setup["harvest-date"])
-                print("Srow: ", env_template["customId"]["srow"], "Scol:", env_template["customId"]["scol"])
+                # print("Srow: ", env_template["customId"]["srow"], "Scol:", env_template["customId"]["scol"])
                 harvest_ws = next(
                     filter(lambda ws: ws["type"][-7:] == "Harvest", env_template["cropRotation"][0]["worksteps"]))
                 # if setup["harvest-date"] == "fixed":
@@ -839,7 +833,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
                 if not DEBUG_DONOT_SEND:
                     socket.send_json(env_template)
-                    print("sent env ", sent_env_count, " customId: ", env_template["customId"])
+                    # print("sent env ", sent_env_count, " customId: ", env_template["customId"])
 
                 sent_env_count += 1
 
