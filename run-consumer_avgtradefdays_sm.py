@@ -46,7 +46,7 @@ PATHS = {
     }
 }
 
-TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/SAbuek200_100_25832_etrs89-utm32n.asc"  # Lower Saxony 100 m
+TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/SAARbuek200_100_25832_etrs89-utm32n.asc"  # Lower Saxony 100 m
 # TEMPLATE_LANDUSE_PATH = "{local_path_to_data_dir}germany/landuse_1000_31469_gk5.asc"
 # DATA_SOIL_DB = "germany/buek200.sqlite"
 USE_LANDUSE = False
