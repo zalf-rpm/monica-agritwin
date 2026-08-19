@@ -78,9 +78,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 
 # Brandenburg 100 m
-#DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/BBdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/BBdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
 # DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
 #DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
@@ -127,9 +127,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_SLOPE = "germany/RPslope_100_25832_etrs89-utm32n.asc"
 
 # Saarland
-DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/SAARdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/SAARdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony-Anhalt
 #DATA_GRID_SOIL = "germany/SAbuek200_100_25832_etrs89-utm32n.asc"
