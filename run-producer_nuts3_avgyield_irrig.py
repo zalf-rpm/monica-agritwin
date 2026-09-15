@@ -79,7 +79,6 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
 DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
 DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
-DATA_GRID_IRRIGATION = "germany/irrigation_maps/LSirrigation_100_25832_etrs89-utms32n_maize"
 
 # North Rhine-Westphalia
 #DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
@@ -135,7 +134,6 @@ DATA_GRID_IRRIGATION = "germany/irrigation_maps/LSirrigation_100_25832_etrs89-ut
 #DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_HEIGHT = "germany/THdem_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_IRRIGATION = "germany/irrigation_maps/THirrigation_100_25832_etrs89-utms32n_maize.asc"
 
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
