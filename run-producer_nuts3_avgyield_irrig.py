@@ -62,9 +62,9 @@ PATHS = {
 DATA_SOIL_DB = "germany/buek200.sqlite"
 
 # Germany 100m
-DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/buek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/dem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 
 # Brandenburg
 #DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
@@ -131,15 +131,16 @@ DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/SHslope_100_25832_etrs89-utm32n.asc"
 
 # Thuringia
-#DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/THdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/THdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/THslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_IRRIGATION = "germany/irrigation_maps/THirrigation_100_25832_etrs89-utms32n_maize.asc"
 
 
 TEMPLATE_PATH_LATLON = "{path_to_climate_dir}/latlon-to-rowcol.json"
 # TEMPLATE_PATH_LATLON = "data/latlon_to_rowcol.json"
-# TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz"
-TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv"
+TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/{crow}/daily_mean_RES1_C{ccol}R{crow}.csv.gz" #historical
+#TEMPLATE_PATH_CLIMATE_CSV = "{gcm}/{rcm}/{scenario}/{ensmem}/{version}/row-{crow}/col-{ccol}.csv" projection
 
 TEMPLATE_PATH_HARVEST = "{path_to_data_dir}/projects/monica-germany/ILR_SEED_HARVEST_doys_{crop_id}.csv"
 
@@ -314,7 +315,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
         # read irrigation map from setup
         if setup.get("irrigation_data"):
-            DATA_GRID_IRRIGATION = str("germany/" + setup["irrigation_data"])
+            DATA_GRID_IRRIGATION = str("germany/irrigation_maps/" + setup["irrigation_data"])
             path_to_irrigation_grid = paths["path-to-projects-dir"] + DATA_GRID_IRRIGATION
             irrigation_epsg_code = int(path_to_irrigation_grid.split("/")[-1].split("_")[4])
             irrigation_crs = CRS.from_epsg(irrigation_epsg_code)
