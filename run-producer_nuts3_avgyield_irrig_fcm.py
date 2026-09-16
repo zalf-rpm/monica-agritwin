@@ -939,20 +939,20 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
 
                         if not os.path.isfile(path_to_debug_file):
                             with open(path_to_debug_file, "w") as _:
-                                _.write(json.dumps(env_template))
+                                _.write(json.dumps(env))
                         else:
                             print("WARNING: Row ", (sent_env_count - 1), " already exists")
             # print("unknown_soil_ids:", unknown_soil_ids)
 
         if env_template and is_sensitivity_analysis:
-            env["pathToClimateCSV"] = ""
-            env["customId"] = {
+            env_template["pathToClimateCSV"] = ""
+            env_template["customId"] = {
                 "setup_id": setup_id,
                 "no_of_sent_envs": sent_env_count,
                 "is_sensitivity_analysis": is_sensitivity_analysis
             }
             print(f"Sending summary: setup {setup_id}, no_of_sent_envs={sent_env_count}")
-            socket.send_json(env)
+            socket.send_json(env_template)
 
             # print("crows/cols:", crows_cols)
         # cs__.close()
