@@ -52,7 +52,7 @@ PATHS = {
 }
 
 DATA_SOIL_DB = "germany/buek200.sqlite"
-DATA_GRID_CROPS_DIR = "germany/raster"
+DATA_GRID_CROPS_DIR = "germany/raster_proj"
 
 # Germany 1000 m
 # DATA_GRID_SOIL = "germany/raster_backup/buek200_1000_25832_etrs89-utm32n.asc"
