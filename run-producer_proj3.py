@@ -122,14 +122,14 @@ DATA_GRID_CROPS_DIR = "germany/raster_proj"
 # DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony-Anhalt
-# DATA_GRID_SOIL = "germany/SAbuek200_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_HEIGHT = "germany/SAdem_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_SLOPE = "germany/SAslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/SAbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/SAdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/SAslope_100_25832_etrs89-utm32n.asc"
 
 # Schleswig-Holstein
-DATA_GRID_SOIL = "germany/SHbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/SHdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/SHslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/SHbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/SHdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/SHslope_100_25832_etrs89-utm32n.asc"
 
 # Thuringia
 # DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
