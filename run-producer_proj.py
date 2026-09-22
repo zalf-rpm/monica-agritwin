@@ -72,9 +72,9 @@ DATA_GRID_CROPS_DIR = "germany/raster_proj"
 # DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 
 # Brandenburg 100 m
-DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/BBdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/BBdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
 
 # Lower Saxony 100 m
 # DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
@@ -117,9 +117,9 @@ DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
 # DATA_GRID_SLOPE = "germany/RPslope_100_25832_etrs89-utm32n.asc"
 
 # Saarland
-# DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_HEIGHT = "germany/SAARdem_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/SAARbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/SAARdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/SAARslope_100_25832_etrs89-utm32n.asc"
 
 # Saxony-Anhalt
 # DATA_GRID_SOIL = "germany/SAbuek200_100_25832_etrs89-utm32n.asc"
