@@ -773,7 +773,7 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
                     if irrigation_manager.should_be_irrigated_by_crop_id(setup["crop-id"]):
                         env["params"]["simulationParameters"]["UseAutomaticIrrigation"] = True
                         # add default values for irrigation amount and threshold
-                        env["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [10, "mm"]
+                        env["params"]["simulationParameters"]["AutoIrrigationParams"]["amount"] = [20, "mm"]
                         env["params"]["simulationParameters"]["AutoIrrigationParams"][
                             "trigger_if_nFC_below_%"] = [30, "%"]
                         env["params"]["simulationParameters"]["AutoIrrigationParams"]["set_to_%nFC"] = [100, "%"]
