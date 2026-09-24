@@ -76,9 +76,9 @@ DATA_GRID_CROPS_DIR = "germany/raster_proj"
 # DATA_GRID_SLOPE = "germany/slope_100_25832_etrs89-utm32n.asc"
 
 # Brandenburg 100 m
-#DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/BBdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/BBdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
 
 # Lower Saxony 100 m
 # DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
@@ -101,9 +101,9 @@ DATA_GRID_CROPS_DIR = "germany/raster_proj"
 # DATA_GRID_SLOPE = "germany/SAXslope_100_25832_etrs89-utm32n.asc"
 
 # Hessen
-DATA_GRID_SOIL = "germany/HEbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/HEdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/HEslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/HEbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/HEdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/HEslope_100_25832_etrs89-utm32n.asc"
 
 # Baden-Württemberg
 # DATA_GRID_SOIL = "germany/BWbuek200_100_25832_etrs89-utm32n.asc"
