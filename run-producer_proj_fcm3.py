@@ -86,9 +86,9 @@ DATA_GRID_CROPS_DIR = "germany/raster_proj"
 # DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
 
 # North Rhine-Westphalia 100 m
-DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/NWbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/NWdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
 
 # Bavaria
 #DATA_GRID_SOIL = "germany/BAVbuek200_100_25832_etrs89-utm32n.asc"
@@ -106,9 +106,9 @@ DATA_GRID_SLOPE = "germany/NWslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/HEslope_100_25832_etrs89-utm32n.asc"
 
 # Baden-Württemberg
-# DATA_GRID_SOIL = "germany/BWbuek200_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_HEIGHT = "germany/BWdem_100_25832_etrs89-utm32n.asc"
-# DATA_GRID_SLOPE = "germany/BWslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/BWbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/BWdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/BWslope_100_25832_etrs89-utm32n.asc"
 
 # Mecklenburg-Western Pomerania
 # DATA_GRID_SOIL = "germany/MVbuek200_100_25832_etrs89-utm32n.asc"
