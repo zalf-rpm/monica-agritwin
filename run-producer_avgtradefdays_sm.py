@@ -92,9 +92,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 # DATA_GRID_LAND_USE = "germany/landuse_1000_31469_gk5.asc"
 
 # Brandenburg 100 m
-DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/BBdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/BBbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/BBdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
 #DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
@@ -131,9 +131,9 @@ DATA_GRID_SLOPE = "germany/BBslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/BWslope_100_25832_etrs89-utm32n.asc"
 
 # Mecklenburg-Western Pomerania
-#DATA_GRID_SOIL = "germany/MVbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/MVdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/MVslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/MVbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/MVdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/MVslope_100_25832_etrs89-utm32n.asc"
 
 # Rheinhessen-Pfalz
 #DATA_GRID_SOIL = "germany/RPbuek200_100_25832_etrs89-utm32n.asc"
