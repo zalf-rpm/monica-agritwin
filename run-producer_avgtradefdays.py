@@ -104,9 +104,9 @@ DATA_SOIL_DB = "germany/buek200.sqlite"
 #DATA_GRID_IRRIGATION = "germany/BBirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
 # Lower Saxony 100 m
-DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
-DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SOIL = "germany/LSbuek200_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_HEIGHT = "germany/LSdem_100_25832_etrs89-utm32n.asc"
+#DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_maize_2018.asc"  # maize irrigation map
 #DATA_GRID_IRRIGATION = "germany/LSirrigation_100_25832_etrs89-utms32n_wc_2018.asc"  # winter crops irrigation map
 
@@ -156,9 +156,9 @@ DATA_GRID_SLOPE = "germany/LSslope_100_25832_etrs89-utm32n.asc"
 #DATA_GRID_SLOPE = "germany/SAslope_100_25832_etrs89-utm32n.asc"
 
 # Schleswig-Holstein
-#DATA_GRID_SOIL = "germany/SHbuek200_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_HEIGHT = "germany/SHdem_100_25832_etrs89-utm32n.asc"
-#DATA_GRID_SLOPE = "germany/SHslope_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SOIL = "germany/SHbuek200_100_25832_etrs89-utm32n.asc"
+DATA_GRID_HEIGHT = "germany/SHdem_100_25832_etrs89-utm32n.asc"
+DATA_GRID_SLOPE = "germany/SHslope_100_25832_etrs89-utm32n.asc"
 
 # Thuringia
 #DATA_GRID_SOIL = "germany/THbuek200_100_25832_etrs89-utm32n.asc"
