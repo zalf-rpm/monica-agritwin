@@ -17,12 +17,9 @@
 
 from collections import defaultdict
 import csv
-import numpy as np
 import os
 import sys
 import zmq
-
-import monica_run_lib as Mrunlib
 
 PATHS = {
     "re-local-remote": {
@@ -34,9 +31,6 @@ PATHS = {
         "path-to-csv-output-dir": "/out/csv-out/"
     }
 }
-
-TEMPLATE_SOIL_PATH = "{local_path_to_data_dir}germany/LSbuek200_100_25832_etrs89-utm32n.asc"
-
 
 def heat_stress_cycles(msg):
     meta = msg["customId"]
@@ -102,11 +96,9 @@ def create_output(msg):
             if "CM-count" in vals:
                 cm_count_to_vals[vals["CM-count"]].update(vals)
 
-    cmcs = list(cm_count_to_vals.keys())
-    cmcs.sort()
-    if not cmcs:
+    if not cm_count_to_vals:
         return cm_count_to_vals
-    last_cmc = cmcs[-1]
+    last_cmc = max(cm_count_to_vals)
     if "Year" not in cm_count_to_vals[last_cmc]:
         cm_count_to_vals.pop(last_cmc)
 
@@ -150,30 +142,6 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
     socket.RCVTIMEO = config["timeout"]
     leave = False
 
-    path_to_soil_grid = TEMPLATE_SOIL_PATH.format(local_path_to_data_dir=paths["path-to-projects-dir"])
-    soil_metadata, _ = Mrunlib.read_header(path_to_soil_grid)
-    soil_grid_template = np.loadtxt(path_to_soil_grid, dtype=int, skiprows=6)
-
-    nodata_value = int(soil_metadata["nodata_value"])
-
-    # set all data values to one, to count them later
-    soil_grid_template[soil_grid_template != nodata_value] = 1
-    # set all no-data values to 0, to ignore them while counting
-    soil_grid_template[soil_grid_template == nodata_value] = 0
-
-    # count cols in rows
-    datacells_per_row = np.sum(soil_grid_template, axis=1)
-
-    start_row = int(config["start-row"])
-    end_row = int(config["end-row"])
-    setup_id_to_data = defaultdict(lambda: {
-        "end_row": end_row,
-        "nrows": end_row - start_row + 1 if start_row > 0 and end_row >= start_row else int(soil_metadata["nrows"]),
-        "row-col-data": {},
-        "datacell-count": datacells_per_row.copy(),
-        "next-row": start_row
-    })
-
     heat_aggregates = defaultdict(dict)
 
     def process_message(msg):
@@ -184,25 +152,10 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
         leave = False
 
         custom_id = msg["customId"]
-        setup_id = custom_id["setup_id"]
         is_nodata = custom_id["nodata"]
-
-        data = setup_id_to_data[setup_id]
-
-        row = custom_id["srow"]
 
         if not is_nodata:
             aggregate_heat_stress(msg, heat_aggregates)
-
-        data["row-col-data"][row] = True
-        data["datacell-count"][row] -= 1
-
-        while (data["next-row"] < len(data["datacell-count"])
-               and data["datacell-count"][data["next-row"]] == 0):
-
-            data["row-col-data"].pop(data["next-row"], None)
-
-            data["next-row"] += 1  # move to next row (to be written)
 
         return leave
 
