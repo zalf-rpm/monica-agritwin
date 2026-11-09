@@ -63,19 +63,29 @@ def heat_stress_cycles(msg):
             yield cycle, int(values["Year"]), totals[cycle]  # cycle number, year, accumulated heat stress
 
 
-def write_heat_stress_csv(msg, output_dir, initialized_files):
+def aggregate_heat_stress(msg, aggregates):
+    """Accumulate cell totals by setup, year, cycle, NUTS3 and soil type."""
     meta = msg["customId"]
-    directory = os.path.join(output_dir, str(meta["setup_id"]))
-    os.makedirs(directory, exist_ok=True)
     for cycle, year, total in heat_stress_cycles(msg):
+        groups = aggregates[(meta["setup_id"], year, cycle)]
+        key = (meta["nuts_id"], meta["soil_type"])
+        total_and_count = groups.setdefault(key, [0.0, 0])
+        total_and_count[0] += total
+        total_and_count[1] += 1
+
+
+def write_heat_stress_csv(aggregates, output_dir):
+    """Write mean per NUTS3 region/soil pair, including zero-stress cells."""
+    for (setup_id, year, cycle), groups in aggregates.items():
+        directory = os.path.join(output_dir, str(setup_id))
+        os.makedirs(directory, exist_ok=True)
         path = os.path.join(directory, f"heat-stress_{year}_{cycle}.csv")
-        first = path not in initialized_files
-        with open(path, "w" if first else "a", newline="", encoding="utf-8") as stream:
+        with open(path, "w", newline="", encoding="utf-8") as stream:
             writer = csv.writer(stream, delimiter=";")
-            if first:
-                writer.writerow(["SumStressTT", "Region", "SoilType"])
-            writer.writerow([total, meta["nuts_id"], meta["soil_type"]])
-        initialized_files.add(path)
+            writer.writerow(["SumStressTT", "Region", "SoilType"])
+            for (region, soil_type), (total, count) in sorted(
+                    groups.items(), key=lambda item: tuple(str(v) for v in item[0])):
+                writer.writerow([total / count, region, soil_type])
 
 
 def create_output(msg):
@@ -164,7 +174,7 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
         "next-row": start_row
     })
 
-    heat_csv_files = set()
+    heat_aggregates = defaultdict(dict)
 
     def process_message(msg):
         if len(msg["errors"]) > 0:
@@ -182,14 +192,13 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
         row = custom_id["srow"]
 
         if not is_nodata:
-            write_heat_stress_csv(msg, config["csv-out"], heat_csv_files)
+            aggregate_heat_stress(msg, heat_aggregates)
 
         data["row-col-data"][row] = True
         data["datacell-count"][row] -= 1
 
-        while (data["next-row"] in data["row-col-data"] and data["datacell-count"][data["next-row"]] == 0) \
-                or (
-                len(data["datacell-count"]) > data["next-row"] and data["datacell-count"][data["next-row"]] == 0):
+        while (data["next-row"] < len(data["datacell-count"])
+               and data["datacell-count"][data["next-row"]] == 0):
 
             data["row-col-data"].pop(data["next-row"], None)
 
@@ -197,15 +206,20 @@ def run_consumer(leave_after_finished_run=True, server={"server": None, "port": 
 
         return leave
 
-    while not leave:
-        try:
-            msg = socket.recv_json()
-            leave = process_message(msg)
-        except zmq.error.Again as _e:
-            print('no response from the server (with "timeout"=%d ms) ' % socket.RCVTIMEO)
-            return
-        except Exception as e:
-            print("Exception:", e)
+    try:
+        while not leave:
+            try:
+                msg = socket.recv_json()
+                leave = process_message(msg)
+            except zmq.error.Again as _e:
+                print('no response from the server (with "timeout"=%d ms) ' % socket.RCVTIMEO)
+                break
+            except Exception as e:
+                print("Exception:", e)
+    finally:
+        write_heat_stress_csv(heat_aggregates, config["csv-out"])
+        socket.close()
+        context.term()
 
     print("exiting run_consumer()")
 

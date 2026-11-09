@@ -91,6 +91,6 @@ This setup runs historical MONICA simulations to calculate average yields per so
 ### Heat Stress Simulation
 
 - **`run-producer_hist_heatstress.py`**: Producer script that requests daily `Date`, `CM-count`, `Crop`, `TempSum`, `Tmin`, and `Tmax` outputs. It sends cultivar heat stress parameters, crop map years, region IDs, and soil types with each simulation.
-- **`run-consumer_hist_heatstress.py`**: Consumer script to calculate accumulated heat stress per simulation cell and crop cycle and writes CSV files.
+- **`run-consumer_hist_heatstress.py`**: Consumer script that calculates accumulated heat stress per simulation cell and writes CSV files with the mean per soil type within each NUTS3 region, separately for each setup, year, and crop cycle.
 - **`sim_setups_state_hist.csv`**: CSV file defining simulation setups
 - **`sim_avgyield.json`**: Sim JSON used for this setup
