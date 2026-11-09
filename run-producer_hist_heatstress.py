@@ -282,10 +282,26 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
         crop_id_short = crop_id.split('_')[0]
         crop_data = setup["crop_data"]
 
+        # add crop id from setup file
+        try:
+            # read seed/harvest dates for each crop_id
+            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-data-dir"],
+                                                        crop_id=crop_id_short)
+            print("created seed harvest gk5 interpolator and read data: ", path_harvest)
+            Mrunlib.create_seed_harvest_geoGrid_interpolator_and_read_data(path_harvest, wgs84_crs, utm32_crs,
+                                                                           ilr_seed_harvest_data)
+        except IOError:
+            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-data-dir"],
+                                                        crop_id=crop_id_short)
+            print("Couldn't read file:", path_harvest)
+            continue
+
         start_year = int(str(setup["start_date"])[:4])
         end_year = int(str(setup["end_date"])[:4])
 
-        simulation_years = tuple(range(start_year, end_year + 1))
+        is_winter_crop = ilr_seed_harvest_data[crop_id_short]["is-winter-crop"]
+        first_harvest_year = start_year + int(bool(is_winter_crop))
+        simulation_years = tuple(range(first_harvest_year, end_year + 1))
 
         # Store the union of all yearly crop maps as a compact bit mask. The simulation remains continuous, while the
         # consumer can select crop cells separately for each output year.
@@ -309,20 +325,6 @@ def run_producer(server={"server": None, "port": None}, shared_id=None):
             soil_grid_copy = soil_grid.copy()
             soil_grid[mask == False] = -8888
             soil_grid[soil_grid_copy == -9999] = -9999
-
-        # add crop id from setup file
-        try:
-            # read seed/harvest dates for each crop_id
-            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-data-dir"],
-                                                        crop_id=crop_id_short)
-            print("created seed harvest gk5 interpolator and read data: ", path_harvest)
-            Mrunlib.create_seed_harvest_geoGrid_interpolator_and_read_data(path_harvest, wgs84_crs, utm32_crs,
-                                                                           ilr_seed_harvest_data)
-        except IOError:
-            path_harvest = TEMPLATE_PATH_HARVEST.format(path_to_data_dir=paths["path-to-data-dir"],
-                                                        crop_id=crop_id_short)
-            print("Couldn't read file:", path_harvest)
-            continue
 
         # read irrigation map from setup
         if setup["irrigation"] and setup.get("irrigation_data"):
